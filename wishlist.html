@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack Optimizer - Wishboard</title>
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --primary-purple: #5856D6;
+            --success-green: #34C759;
+            --danger-red: #FF3B30;
+            --warning-orange: #FF9500;
+            --system-gray: #8E8E93;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #3A3A3C;
+            --border-radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--system-gray5);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--system-gray5);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--system-gray);
+            font-weight: 500;
+        }
+
+        .user-profile {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--system-gray4);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background: var(--surface);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--primary-purple);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+        }
+
+        .btn-warning {
+            background: var(--warning-orange);
+        }
+
+        .btn-danger {
+            background: var(--danger-red);
+        }
+
+        .wishlist-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .wishlist-item {
+            background: linear-gradient(135deg, #fff, #f8f9ff);
+            border: 2px solid var(--system-gray5);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .wishlist-item:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .priority-high {
+            border-left: 6px solid var(--danger-red);
+        }
+
+        .priority-medium {
+            border-left: 6px solid var(--warning-orange);
+        }
+
+        .priority-low {
+            border-left: 6px solid var(--success-green);
+        }
+
+        .wish-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .wish-amount {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--success-green);
+            margin-bottom: 16px;
+        }
+
+        .wish-progress {
+            background: var(--system-gray5);
+            border-radius: 12px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .wish-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), var(--primary-blue));
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--system-gray);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🎒 Backpack Optimizer</div>
+            <div class="tagline">Smart budgeting for students</div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div id="userName">Akshat</div>
+            <div style="font-size: 12px; opacity: 0.8;" id="userCampus">CHRIST_BLR</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="expenses.html" class="nav-link">
+                    <span class="nav-icon">💸</span>
+                    <span>My Expenses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="add-expense.html" class="nav-link">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Expense</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="wishboard.html" class="nav-link active">
+                    <span class="nav-icon">⭐</span>
+                    <span>Wishboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="marketplace.html" class="nav-link">
+                    <span class="nav-icon">🛒</span>
+                    <span>Marketplace</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="housing.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span>Housing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="analytics.html" class="nav-link">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="profile.html" class="nav-link">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">⭐ Wishboard</h1>
+            <p class="page-subtitle">Transform dreams into achievable financial goals</p>
+        </div>
+
+        <!-- Add New Wish Form -->
+        <div class="card">
+            <h3 style="margin-bottom: 20px;">✨ Add New Wish</h3>
+            <form id="wishForm" onsubmit="addWish(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishName">🎯 What do you want?</label>
+                        <input type="text" class="form-control" id="wishName" placeholder="e.g., New iPhone, Gaming Laptop, Europe Trip" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishAmount">💰 Target Amount (₹)</label>
+                        <input type="number" class="form-control" id="wishAmount" placeholder="0.00" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishDate">📅 Target Date</label>
+                        <input type="date" class="form-control" id="wishDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishPriority">⭐ Priority Level</label>
+                        <select class="form-control" id="wishPriority">
+                            <option value="low">🟢 Low Priority</option>
+                            <option value="medium" selected>🟡 Medium Priority</option>
+                            <option value="high">🔴 High Priority</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishCategory">📂 Category</label>
+                        <select class="form-control" id="wishCategory">
+                            <option value="electronics">📱 Electronics</option>
+                            <option value="travel">✈️ Travel</option>
+                            <option value="education">📚 Education</option>
+                            <option value="fashion">👕 Fashion</option>
+                            <option value="health">🏥 Health & Fitness</option>
+                            <option value="other">🔄 Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishSaved">💎 Already Saved (₹)</label>
+                        <input type="number" class="form-control" id="wishSaved" placeholder="0.00" step="0.01" min="0" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="wishDescription">📝 Why is this important to you?</label>
+                    <textarea class="form-control" id="wishDescription" rows="3" placeholder="Describe why this goal matters to you..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">⭐ Add to Wishboard</button>
+            </form>
+        </div>
+
+        <!-- My Wishes -->
+        <div class="card">
+            <h3 style="margin-bottom: 20px;">🌟 My Financial Goals</h3>
+            <div class="wishlist-grid" id="wishlistGrid">
+                <!-- Wishes will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let wishlist = JSON.parse(localStorage.getItem('backpack_wishlist') || '[]');
+
+        // Check if user is logged in
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        }
+
+        // Initialize sample data
+        if (wishlist.length === 0) {
+            wishlist = [
+                {
+                    id: 1,
+                    userId: currentUser.id,
+                    name: 'Gaming Laptop',
+                    targetAmount: 60000,
+                    savedAmount: 15000,
+                    targetDate: '2024-06-01',
+                    priority: 'high',
+                    category: 'electronics',
+                    description: 'Need for programming and gaming',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    userId: currentUser.id,
+                    name: 'Europe Trip',
+                    targetAmount: 150000,
+                    savedAmount: 25000,
+                    targetDate: '2024-12-01',
+                    priority: 'medium',
+                    category: 'travel',
+                    description: 'Dream graduation trip with friends',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+        }
+
+        function updateUserProfile() {
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userCampus').textContent = currentUser.campus;
+            document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
+        }
+
+        function addWish(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('wishName').value;
+            const amount = parseFloat(document.getElementById('wishAmount').value);
+            const date = document.getElementById('wishDate').value;
+            const priority = document.getElementById('wishPriority').value;
+            const category = document.getElementById('wishCategory').value;
+            const saved = parseFloat(document.getElementById('wishSaved').value) || 0;
+            const description = document.getElementById('wishDescription').value;
+
+            const wish = {
+                id: Date.now(),
+                userId: currentUser.id,
+                name,
+                targetAmount: amount,
+                savedAmount: saved,
+                targetDate: date,
+                priority,
+                category,
+                description,
+                createdAt: new Date().toISOString()
+            };
+
+            wishlist.push(wish);
+            localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+            
+            updateWishboard();
+            showFlashMessage(`⭐ "${name}" added to your wishboard! Start saving towards your goal! 🎯`);
+            
+            // Clear form
+            document.getElementById('wishForm').reset();
+        }
+
+        function updateWishboard() {
+            const container = document.getElementById('wishlistGrid');
+            const userWishes = wishlist.filter(w => w.userId === currentUser.id)
+                                      .sort((a, b) => {
+                                          const priorityOrder = { high: 3, medium: 2, low: 1 };
+                                          if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                                              return priorityOrder[b.priority] - priorityOrder[a.priority];
+                                          }
+                                          return new Date(b.createdAt) - new Date(a.createdAt);
+                                      });
+
+            if (userWishes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🌟</div>
+                        <div style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">No wishes yet</div>
+                        <div style="font-size: 16px;">Add your first financial goal to start tracking progress toward your dreams!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = userWishes.map(wish => {
+                const progress = (wish.savedAmount / wish.targetAmount) * 100;
+                const daysLeft = wish.targetDate ? Math.max(0, Math.ceil((new Date(wish.targetDate) - new Date()) / (1000 * 60 * 60 * 24))) : null;
+                
+                return `
+                    <div class="wishlist-item priority-${wish.priority}">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                            <div class="wish-title">${wish.name}</div>
+                            <span style="padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; color: white; background: ${getPriorityColor(wish.priority)};">
+                                ${getPriorityIcon(wish.priority)} ${wish.priority.toUpperCase()}
+                            </span>
+                        </div>
+                        
+                        <div class="wish-amount">₹${wish.targetAmount.toLocaleString('en-IN')}</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="font-size: 14px; color: var(--system-gray);">Progress</span>
+                                <span style="font-size: 14px; font-weight: 600;">${progress.toFixed(1)}%</span>
+                            </div>
+                            <div class="wish-progress">
+                                <div class="wish-progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; color: var(--system-gray); margin-bottom: 12px;">
+                            <div>💰 <strong>Saved:</strong> ₹${wish.savedAmount.toLocaleString('en-IN')}</div>
+                            <div>🎯 <strong>Left:</strong> ₹${(wish.targetAmount - wish.savedAmount).toLocaleString('en-IN')}</div>
+                        </div>
+                        
+                        ${wish.targetDate ? `
+                            <div style="margin-bottom: 12px; font-size: 14px; color: var(--system-gray);">
+                                📅 <strong>Target:</strong> ${formatDate(wish.targetDate)}
+                                ${daysLeft !== null ? ` (${daysLeft} days left)` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        ${wish.description ? `
+                            <div style="margin-bottom: 16px; padding: 12px; background: rgba(0,122,255,0.1); border-radius: 8px; font-size: 14px;">
+                                💭 ${wish.description}
+                            </div>
+                        ` : ''}
+                        
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-success" onclick="addSavings(${wish.id})" style="padding: 8px 16px; font-size: 14px;">
+                                ➕ Add Savings
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteWish(${wish.id})" style="padding: 8px 16px; font-size: 14px;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addSavings(wishId) {
+            const amount = prompt("How much would you like to add to your savings? (₹)");
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                const wish = wishlist.find(w => w.id === wishId);
+                if (wish) {
+                    wish.savedAmount += parseFloat(amount);
+                    if (wish.savedAmount >= wish.targetAmount) {
+                        wish.savedAmount = wish.targetAmount;
+                        showFlashMessage(`🎉 Congratulations! You've achieved your goal "${wish.name}"! Time to celebrate! 🥳`);
+                    } else {
+                        showFlashMessage(`💰 ₹${amount} added to "${wish.name}"! Keep saving! 💪`);
+                    }
+                    localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                    updateWishboard();
+                }
+            }
+        }
+
+        function deleteWish(wishId) {
+            if (confirm('Are you sure you want to delete this wish?')) {
+                wishlist = wishlist.filter(w => w.id !== wishId);
+                localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                updateWishboard();
+                showFlashMessage('Wish deleted successfully! 🗑️');
+            }
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                high: '#FF3B30',
+                medium: '#FF9500',
+                low: '#34C759'
+            };
+            return colors[priority] || '#8E8E93';
+        }
+
+        function getPriorityIcon(priority) {
+            const icons = {
+                high: '🔴',
+                medium: '🟡',
+                low: '🟢'
+            };
+            return icons[priority] || '⚪';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function showFlashMessage(message) {
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1500;
+                background: white; padding: 16px 20px; border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-left: 4px solid #34C759;
+                animation: slideIn 0.3s ease;
+            `;
+            flash.innerHTML = `${message} <span onclick="this.parentElement.remove()" style="cursor:pointer;float:right;">&times;</span>`;
+            document.body.appendChild(flash);
+
+            setTimeout(() => {
+                if (flash.parentNode) flash.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // Initialize page
+        updateUserProfile();
+        updateWishboard();
+    </script>
+</body>
+</html>

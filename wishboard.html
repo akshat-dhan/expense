@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack Optimizer - Smart Wishboard</title>
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --primary-purple: #5856D6;
+            --success-green: #34C759;
+            --danger-red: #FF3B30;
+            --warning-orange: #FF9500;
+            --info-cyan: #5AC8FA;
+            --system-gray: #8E8E93;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #3A3A3C;
+            --border-radius: 20px;
+            --shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            --gradient-success: linear-gradient(135deg, #00C9FF, #92FE9D);
+            --gradient-warning: linear-gradient(135deg, #FC466B, #3F5EFB);
+            --gradient-premium: linear-gradient(135deg, #667eea, #764ba2);
+            --gradient-gold: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(40px);
+            border-right: 1px solid var(--system-gray5);
+            z-index: 1000;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 15px 0 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--system-gray5);
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -2px;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 122, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(0, 122, 255, 0.6)); }
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--system-gray);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .user-profile {
+            background: var(--gradient-primary);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 122, 255, 0.3);
+        }
+
+        .user-profile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: profileShine 4s infinite;
+        }
+
+        @keyframes profileShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            margin: 0 auto 18px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 18px;
+            font-weight: 700;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            left: 0;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.4);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            width: 28px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link span:last-child {
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            margin-left: 320px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            letter-spacing: -3px;
+            animation: titleFloat 6s ease-in-out infinite;
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-15px) scale(1.05); }
+        }
+
+        .page-subtitle {
+            font-size: 1.6rem;
+            opacity: 0.95;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .premium-badge {
+            display: inline-block;
+            background: var(--gradient-gold);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border: 1px solid var(--system-gray5);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid var(--system-gray4);
+            border-radius: 18px;
+            font-size: 16px;
+            background: var(--surface);
+            transition: var(--transition);
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 122, 255, 0.4);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+        }
+
+        .btn-warning {
+            background: var(--gradient-warning);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #FF6B6B, #FF5252);
+        }
+
+        .smart-suggestions {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.15), rgba(88, 86, 214, 0.15));
+            border: 3px solid;
+            border-image: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) 1;
+            border-radius: 25px;
+            padding: 30px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .smart-suggestions::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: suggestionShine 4s infinite;
+        }
+
+        @keyframes suggestionShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .ai-brain {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            animation: brainPulse 2s infinite;
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        @keyframes brainPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+            }
+            50% { 
+                transform: scale(1.1); 
+                box-shadow: 0 12px 30px rgba(0, 122, 255, 0.6);
+            }
+        }
+
+        .suggestion-content {
+            display: none;
+        }
+
+        .suggestion-visible {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .savings-plan {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .plan-card {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            border: 2px solid var(--system-gray5);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-blue);
+        }
+
+        .plan-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .plan-label {
+            font-size: 13px;
+            color: var(--system-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tip-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary-blue);
+            transition: var(--transition);
+        }
+
+        .tip-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .wishlist-grid {
+            display: grid;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .wishlist-item {
+            background: linear-gradient(135deg, #fff, #f8f9ff);
+            border: 2px solid var(--system-gray5);
+            border-radius: 25px;
+            padding: 35px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .wishlist-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .wishlist-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .wishlist-item:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .priority-high {
+            border-left: 8px solid var(--danger-red);
+            background: linear-gradient(135deg, #fff, #fff5f5);
+        }
+
+        .priority-medium {
+            border-left: 8px solid var(--warning-orange);
+            background: linear-gradient(135deg, #fff, #fffbf0);
+        }
+
+        .priority-low {
+            border-left: 8px solid var(--success-green);
+            background: linear-gradient(135deg, #fff, #f0fff4);
+        }
+
+        .wish-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .wish-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .priority-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .wish-amount {
+            font-size: 36px;
+            font-weight: 900;
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-section {
+            margin-bottom: 25px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progress-percentage {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary-blue);
+        }
+
+        .wish-progress {
+            background: var(--system-gray5);
+            border-radius: 15px;
+            height: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .wish-progress-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            border-radius: 15px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wish-progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: progressShine 2.5s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .financial-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .summary-item:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-value {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--system-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .savings-intelligence {
+            background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.05));
+            border: 2px solid var(--success-green);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .intelligence-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .intelligence-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--success-green);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            animation: intelligencePulse 3s infinite;
+        }
+
+        @keyframes intelligencePulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(52, 199, 89, 0);
+            }
+        }
+
+        .monthly-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .breakdown-item {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .breakdown-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .breakdown-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--success-green);
+        }
+
+        .breakdown-label {
+            font-size: 11px;
+            color: var(--system-gray);
+            margin-top: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .achievement-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: achievementGlow 2s infinite;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+            border: 4px solid white;
+        }
+
+        @keyframes achievementGlow {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+            }
+            50% { 
+                transform: scale(1.1) rotate(5deg);
+                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--system-gray);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 25px;
+            border: 3px dashed var(--system-gray4);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            opacity: 0.7;
+            animation: emptyFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes emptyFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .flash-message {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-left: 6px solid var(--success-green);
+            z-index: 2000;
+            max-width: 450px;
+            font-weight: 700;
+            animation: slideInRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.4s ease;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 25px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .page-title {
+                font-size: 2.8rem;
+            }
+            
+            .savings-plan {
+                grid-template-columns: 1fr;
+            }
+
+            .monthly-breakdown {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🎒 Backpack Optimizer</div>
+            <div class="tagline">Smart Wishboard Platform</div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div id="userName" style="font-size: 20px; font-weight: 800;">Loading...</div>
+            <div id="userCampus" style="font-size: 14px; opacity: 0.9;">Loading...</div>
+            <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;" id="userRegNumber">Loading...</div>
+            <div style="font-size: 13px; margin-top: 12px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 12px;">🌟 Dream Achiever</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="expenses.html" class="nav-link">
+                    <span class="nav-icon">💸</span>
+                    <span>My Expenses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="add-expense.html" class="nav-link">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Expense</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="wishboard.html" class="nav-link active">
+                    <span class="nav-icon">⭐</span>
+                    <span>Wishboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="marketplace.html" class="nav-link">
+                    <span class="nav-icon">🛒</span>
+                    <span>Marketplace</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="housing.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span>Housing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="analytics.html" class="nav-link">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="profile.html" class="nav-link">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Enhanced Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Ultimate Wishboard</h1>
+            <p class="page-subtitle">Transform dreams into reality with AI-powered financial planning</p>
+            <div class="premium-badge">🏆 Smart Wishlist Platform</div>
+        </div>
+
+        <!-- Advanced Statistics Overview -->
+        <div class="stats-overview">
+            <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <span class="stat-icon">🎯</span>
+                <div class="stat-value" id="totalWishes">0</div>
+                <div class="stat-label">Active Goals</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <span class="stat-icon">💰</span>
+                <div class="stat-value" id="totalTargetAmount">₹0</div>
+                <div class="stat-label">Total Dreams</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <span class="stat-icon">💎</span>
+                <div class="stat-value" id="totalSavedAmount">₹0</div>
+                <div class="stat-label">Total Saved</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <span class="stat-icon">📊</span>
+                <div class="stat-value" id="averageProgress">0%</div>
+                <div class="stat-label">Progress Rate</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #FFD700, #FFA500);">
+                <span class="stat-icon">⚡</span>
+                <div class="stat-value" id="monthsToComplete">0</div>
+                <div class="stat-label">Avg Months</div>
+            </div>
+        </div>
+
+        <!-- Enhanced Add New Wish Form -->
+        <div class="card">
+            <h3 style="margin-bottom: 25px; font-size: 24px; font-weight: 900;">✨ Create Your Dream Goal</h3>
+            <form id="wishForm" onsubmit="addWish(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishName">🎯 What's Your Dream?</label>
+                        <input type="text" class="form-control" id="wishName" placeholder="e.g., MacBook Pro, iPhone 15, Gaming Setup, Europe Trip" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishAmount">💰 Dream Price (₹)</label>
+                        <input type="number" class="form-control" id="wishAmount" placeholder="0.00" step="0.01" required oninput="generateSmartSuggestions()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishDate">📅 Dream Date</label>
+                        <input type="date" class="form-control" id="wishDate" onchange="generateSmartSuggestions()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishPriority">⭐ How Important?</label>
+                        <select class="form-control" id="wishPriority">
+                            <option value="low">🟢 Low Priority - Someday</option>
+                            <option value="medium" selected>🟡 Medium Priority - Important</option>
+                            <option value="high">🔴 High Priority - Urgent Need</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="wishCategory">📂 Dream Category</label>
+                        <select class="form-control" id="wishCategory">
+                            <option value="electronics">📱 Electronics & Tech</option>
+                            <option value="travel">✈️ Travel & Adventure</option>
+                            <option value="education">📚 Education & Skills</option>
+                            <option value="fashion">👕 Fashion & Style</option>
+                            <option value="health">🏥 Health & Fitness</option>
+                            <option value="vehicle">🚗 Vehicle & Transport</option>
+                            <option value="entertainment">🎮 Entertainment & Gaming</option>
+                            <option value="other">🌟 Other Dreams</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wishSaved">💎 Already Saved (₹)</label>
+                        <input type="number" class="form-control" id="wishSaved" placeholder="0.00" step="0.01" min="0" value="0" oninput="generateSmartSuggestions()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="wishDescription">📝 Why This Dream Matters?</label>
+                    <textarea class="form-control" id="wishDescription" rows="3" placeholder="Tell us why this goal is important to you and how it will change your life..."></textarea>
+                </div>
+
+                <!-- Real-time Smart Suggestions -->
+                <div id="smartSuggestions" class="smart-suggestions" style="display: none;">
+                    <div class="suggestion-header">
+                        <div class="ai-brain">🧠</div>
+                        <div>
+                            <h4 style="margin: 0; font-weight: 900; color: var(--primary-blue);">AI Smart Savings Calculator</h4>
+                            <p style="margin: 0; color: var(--system-gray); font-size: 14px;">Personalized plan to achieve your dream</p>
+                        </div>
+                    </div>
+                    <div id="suggestionContent" class="suggestion-content"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success" style="padding: 20px 40px; font-size: 18px;">
+                    Add Dream to Wishboard
+                </button>
+            </form>
+        </div>
+
+        <!-- Enhanced Dream Goals Display -->
+        <div class="card">
+            <h3 style="margin-bottom: 25px; font-size: 24px; font-weight: 900;">🌟 Your Dream Goals & AI Insights</h3>
+            <div class="wishlist-grid" id="wishlistGrid">
+                <!-- Dreams will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ✅ CLEAN APPLICATION STATE - NO PREDEFINED DATA
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let wishlist = JSON.parse(localStorage.getItem('backpack_wishlist') || '[]');
+
+        // ✅ CHECK AUTHENTICATION - REDIRECT IF NOT LOGGED IN
+        if (!currentUser) {
+            window.location.href = 'index.html';
+            throw new Error('User not authenticated');
+        }
+
+        // ✅ REAL USER PROFILE UPDATE - FIXED REG NUMBER
+        function updateUserProfile() {
+            const campusNames = {
+                'CHRIST_BLR': 'Christ University - BCA',
+                'DU_DELHI': 'Delhi University',
+                'VIT_VEL': 'VIT Vellore', 
+                'BITS_PIL': 'BITS Pilani',
+                'IIT_BOM': 'IIT Bombay',
+                'IIT_DEL': 'IIT Delhi'
+            };
+
+            const nameElement = document.getElementById('userName');
+            const campusElement = document.getElementById('userCampus');
+            const regElement = document.getElementById('userRegNumber');
+            const avatarElement = document.getElementById('userAvatar');
+
+            if (nameElement) nameElement.textContent = currentUser.fullName || 'Student';
+            if (campusElement) campusElement.textContent = campusNames[currentUser.campus] || currentUser.campus || 'University';
+            if (regElement) regElement.textContent = `Reg: ${currentUser.regNumber || 'Not provided'}`; // ✅ FIXED - Shows real reg number
+            if (avatarElement) avatarElement.textContent = (currentUser.fullName || 'S')[0].toUpperCase();
+            
+            console.log('✅ User Profile Updated with REAL data:', {
+                name: currentUser.fullName,
+                regNumber: currentUser.regNumber, // This shows actual user input
+                campus: currentUser.campus
+            });
+        }
+
+        // ✅ ENHANCED STATISTICS WITH REAL DATA ONLY
+        function updateStatistics() {
+            const userWishes = wishlist.filter(w => w.userId === currentUser.id);
+            const totalTarget = userWishes.reduce((sum, w) => sum + w.targetAmount, 0);
+            const totalSaved = userWishes.reduce((sum, w) => sum + w.savedAmount, 0);
+            const avgProgress = userWishes.length > 0 ? (totalSaved / totalTarget * 100) : 0;
+            
+            // Calculate average months to complete
+            let totalMonths = 0;
+            let validGoals = 0;
+            userWishes.forEach(wish => {
+                if (wish.targetDate && wish.savedAmount < wish.targetAmount) {
+                    const remaining = wish.targetAmount - wish.savedAmount;
+                    const monthsToTarget = Math.ceil((new Date(wish.targetDate) - new Date()) / (1000 * 60 * 60 * 24 * 30));
+                    if (monthsToTarget > 0) {
+                        totalMonths += monthsToTarget;
+                        validGoals++;
+                    }
+                }
+            });
+            const avgMonths = validGoals > 0 ? Math.round(totalMonths / validGoals) : 0;
+
+            // Animate all values
+            animateValue('totalWishes', 0, userWishes.length, 1000);
+            animateValue('totalTargetAmount', 0, totalTarget, 1500, '₹');
+            animateValue('totalSavedAmount', 0, totalSaved, 1500, '₹');
+            animateValue('averageProgress', 0, avgProgress, 2000, '', '%');
+            animateValue('monthsToComplete', 0, avgMonths, 1000);
+        }
+
+        // Real-time Smart Suggestions Generator
+        function generateSmartSuggestions() {
+            const amount = parseFloat(document.getElementById('wishAmount').value) || 0;
+            const date = document.getElementById('wishDate').value;
+            const saved = parseFloat(document.getElementById('wishSaved').value) || 0;
+            const name = document.getElementById('wishName').value;
+            
+            if (amount <= 0) {
+                document.getElementById('smartSuggestions').style.display = 'none';
+                return;
+            }
+
+            const remaining = amount - saved;
+            const monthlyBudget = currentUser.monthlyBudget || 20000;
+            const savingsCapacity = currentUser.savingsCapacity || 3000;
+
+            let monthsToTarget = 12;
+            if (date) {
+                const targetDate = new Date(date);
+                const now = new Date();
+                monthsToTarget = Math.max(1, Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24 * 30)));
+            }
+
+            const requiredMonthlySaving = Math.ceil(remaining / monthsToTarget);
+            const feasibilityScore = calculateFeasibilityScore(requiredMonthlySaving, savingsCapacity);
+
+            const suggestionContent = generateAdvancedSuggestions(amount, remaining, requiredMonthlySaving, monthsToTarget, feasibilityScore, name);
+            
+            document.getElementById('suggestionContent').innerHTML = suggestionContent;
+            document.getElementById('suggestionContent').className = 'suggestion-content suggestion-visible';
+            document.getElementById('smartSuggestions').style.display = 'block';
+        }
+
+        function calculateFeasibilityScore(required, capacity) {
+            const ratio = required / capacity;
+            if (ratio <= 0.5) return 'excellent';
+            if (ratio <= 0.8) return 'good';
+            if (ratio <= 1.2) return 'challenging';
+            return 'difficult';
+        }
+
+        function generateAdvancedSuggestions(totalAmount, remaining, monthlyRequired, months, feasibility, itemName) {
+            const weeklyRequired = Math.ceil(monthlyRequired / 4);
+            const dailyRequired = Math.ceil(monthlyRequired / 30);
+            const budgetPercentage = ((monthlyRequired / (currentUser.monthlyBudget || 20000)) * 100).toFixed(1);
+
+            let feasibilityColor = '#34C759';
+            let feasibilityText = 'Easily Achievable! 🎉';
+            let feasibilityIcon = '✅';
+            
+            if (feasibility === 'good') {
+                feasibilityColor = '#FF9500';
+                feasibilityText = 'Achievable with focus 💪';
+                feasibilityIcon = '⚠️';
+            } else if (feasibility === 'challenging') {
+                feasibilityColor = '#FF3B30';
+                feasibilityText = 'Needs commitment 🔥';
+                feasibilityIcon = '⚠️';
+            } else if (feasibility === 'difficult') {
+                feasibilityColor = '#FF3B30';
+                feasibilityText = 'Very challenging 🚀';
+                feasibilityIcon = '🔴';
+            }
+
+            return `
+                <div class="savings-plan">
+                    <div class="plan-card">
+                        <div class="plan-value">₹${monthlyRequired.toLocaleString('en-IN')}</div>
+                        <div class="plan-label">Monthly Target</div>
+                    </div>
+                    <div class="plan-card">
+                        <div class="plan-value">₹${weeklyRequired.toLocaleString('en-IN')}</div>
+                        <div class="plan-label">Weekly Saving</div>
+                    </div>
+                    <div class="plan-card">
+                        <div class="plan-value">₹${dailyRequired.toLocaleString('en-IN')}</div>
+                        <div class="plan-label">Daily Amount</div>
+                    </div>
+                    <div class="plan-card">
+                        <div class="plan-value">${budgetPercentage}%</div>
+                        <div class="plan-label">Of Budget</div>
+                    </div>
+                    <div class="plan-card" style="border-color: ${feasibilityColor};">
+                        <div class="plan-value" style="color: ${feasibilityColor};">${feasibilityIcon}</div>
+                        <div class="plan-label">${feasibilityText}</div>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <strong>🎯 Smart Strategy for ${itemName || 'Your Goal'}:</strong><br>
+                    ${generateSpecificTips(totalAmount, monthlyRequired, feasibility)}
+                </div>
+                
+                ${generateCategoryTips(document.getElementById('wishCategory').value, totalAmount)}
+                
+                <div class="tip-item">
+                    <strong>💡 Pro Financial Tips:</strong><br>
+                    ${generateProTips(monthlyRequired, (currentUser.monthlyBudget || 20000))}
+                </div>
+            `;
+        }
+
+        function generateSpecificTips(amount, monthlyRequired, feasibility) {
+            let tips = '';
+            
+            if (feasibility === 'excellent') {
+                tips = `Perfect fit for your budget! Set up automatic transfers of ₹${Math.ceil(monthlyRequired/2).toLocaleString('en-IN')} bi-weekly. Consider investing in SIP for better returns.`;
+            } else if (feasibility === 'good') {
+                tips = `Achievable with some lifestyle adjustments:<br>• Reduce dining out by ₹${Math.ceil(monthlyRequired * 0.3).toLocaleString('en-IN')}/month<br>• Cut entertainment expenses by 20%<br>• Look for student part-time opportunities`;
+            } else if (feasibility === 'challenging') {
+                tips = `Requires significant commitment:<br>• Extend target by 2-3 months for easier saving<br>• Explore part-time income (₹${Math.ceil(monthlyRequired * 0.4).toLocaleString('en-IN')}/month)<br>• Consider buying during major sales (save 15-30%)`;
+            } else {
+                tips = `Very aggressive target. Consider these options:<br>• Extend timeline by 6+ months<br>• Look for EMI options with 0% interest<br>• Consider pre-owned/refurbished options<br>• Increase monthly income through freelancing`;
+            }
+            
+            return tips;
+        }
+
+        function generateCategoryTips(category, amount) {
+            let categoryTips = '';
+            
+            switch(category) {
+                case 'electronics':
+                    categoryTips = `<div class="tip-item"><strong>📱 Electronics Shopping Tips:</strong><br>• Wait for Diwali/Republic Day sales (20-40% off)<br>• Check for student discounts (5-15% additional)<br>• Consider refurbished from official stores<br>• Use credit card EMI for 0% interest<br>• Compare prices on Amazon, Flipkart, Croma</div>`;
+                    break;
+                case 'travel':
+                    categoryTips = `<div class="tip-item"><strong>✈️ Travel Savings Tips:</strong><br>• Book flights 2-3 months in advance<br>• Use student travel cards for discounts<br>• Consider hostels over hotels<br>• Travel during off-peak seasons<br>• Look for group booking discounts</div>`;
+                    break;
+                case 'education':
+                    categoryTips = `<div class="tip-item"><strong>📚 Education Investment Tips:</strong><br>• Apply for merit scholarships<br>• Use library resources first<br>• Buy second-hand textbooks<br>• Join online course sales<br>• Look for free alternatives first</div>`;
+                    break;
+                default:
+                    categoryTips = `<div class="tip-item"><strong>🛍️ Smart Shopping Tips:</strong><br>• Wait for end-of-season sales<br>• Use cashback credit cards<br>• Compare prices across platforms<br>• Sign up for price drop alerts<br>• Consider buying in bulk for discounts</div>`;
+            }
+            
+            return categoryTips;
+        }
+
+        function generateProTips(monthlyRequired, monthlyBudget) {
+            const percentage = (monthlyRequired / monthlyBudget) * 100;
+            
+            if (percentage <= 15) {
+                return `• Set up automatic savings transfer<br>• Invest in liquid funds for better returns<br>• Track progress with monthly reviews<br>• Celebrate milestones to stay motivated`;
+            } else if (percentage <= 25) {
+                return `• Use the 50-30-20 budgeting rule<br>• Cut non-essential subscriptions<br>• Cook more meals at home<br>• Use public transport vs private cabs<br>• Sell items you no longer use`;
+            } else {
+                return `• Consider increasing income through:<br>&nbsp;&nbsp;- Part-time tutoring (₹3,000-8,000/month)<br>&nbsp;&nbsp;- Freelance coding (₹5,000-15,000/month)<br>&nbsp;&nbsp;- Content writing (₹2,000-6,000/month)<br>• Negotiate payment plans with vendors<br>• Look for sponsorship opportunities`;
+            }
+        }
+
+        function addWish(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('wishName').value;
+            const amount = parseFloat(document.getElementById('wishAmount').value);
+            const date = document.getElementById('wishDate').value;
+            const priority = document.getElementById('wishPriority').value;
+            const category = document.getElementById('wishCategory').value;
+            const saved = parseFloat(document.getElementById('wishSaved').value) || 0;
+            const description = document.getElementById('wishDescription').value;
+
+            const wish = {
+                id: Date.now(),
+                userId: currentUser.id,
+                name,
+                targetAmount: amount,
+                savedAmount: saved,
+                targetDate: date,
+                priority,
+                category,
+                description,
+                createdAt: new Date().toISOString()
+            };
+
+            wishlist.push(wish);
+            localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+            
+            updateWishboard();
+            updateStatistics();
+            
+            const progress = saved > 0 ? `You're already ${((saved/amount)*100).toFixed(1)}% there!` : 'Let the savings journey begin!';
+            showFlashMessage(`"${name}" added to your dream board! ${progress} Your AI savings plan is ready! 🎯`);
+            
+            // Clear form and hide suggestions
+            document.getElementById('wishForm').reset();
+            document.getElementById('smartSuggestions').style.display = 'none';
+        }
+
+        // ✅ ENHANCED WISHBOARD DISPLAY WITH REAL DATA ONLY
+        function updateWishboard() {
+            const container = document.getElementById('wishlistGrid');
+            const userWishes = wishlist.filter(w => w.userId === currentUser.id)
+                                      .sort((a, b) => {
+                                          const priorityOrder = { high: 3, medium: 2, low: 1 };
+                                          if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                                              return priorityOrder[b.priority] - priorityOrder[a.priority];
+                                          }
+                                          return new Date(b.createdAt) - new Date(a.createdAt);
+                                      });
+
+            if (userWishes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🌟</div>
+                        <div style="font-size: 28px; font-weight: 900; margin-bottom: 15px; color: var(--text-primary);">No Dreams Yet!</div>
+                        <div style="font-size: 18px; margin-bottom: 25px;">Start your journey by adding your first financial goal above!</div>
+                        <div style="font-size: 16px; color: var(--system-gray);">Every great achievement starts with a dream ✨</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = userWishes.map(wish => {
+                const progress = (wish.savedAmount / wish.targetAmount) * 100;
+                const remaining = wish.targetAmount - wish.savedAmount;
+                const isCompleted = progress >= 100;
+                
+                let daysLeft = null;
+                let monthsLeft = 12;
+                let requiredMonthlySaving = 0;
+                
+                if (wish.targetDate && !isCompleted) {
+                    const targetDate = new Date(wish.targetDate);
+                    const now = new Date();
+                    daysLeft = Math.max(0, Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24)));
+                    monthsLeft = Math.max(1, Math.ceil(daysLeft / 30));
+                    requiredMonthlySaving = monthsLeft > 0 ? Math.ceil(remaining / monthsLeft) : remaining;
+                }
+                
+                const feasibilityScore = calculateFeasibilityScore(requiredMonthlySaving, currentUser.savingsCapacity || 3000);
+                
+                return `
+                    <div class="wishlist-item priority-${wish.priority}">
+                        ${isCompleted ? '<div class="achievement-badge">🏆</div>' : ''}
+                        
+                        <div class="wish-header">
+                            <div class="wish-title">
+                                ${getCategoryIcon(wish.category)} ${wish.name}
+                            </div>
+                            <div class="priority-badge" style="background: ${getPriorityColor(wish.priority)};">
+                                ${getPriorityIcon(wish.priority)} ${wish.priority.toUpperCase()}
+                            </div>
+                        </div>
+                        
+                        <div class="wish-amount">₹${wish.targetAmount.toLocaleString('en-IN')}</div>
+                        
+                        <div class="progress-section">
+                            <div class="progress-header">
+                                <span class="progress-label">Dream Progress</span>
+                                <span class="progress-percentage">${progress.toFixed(1)}% ${isCompleted ? '🎉' : ''}</span>
+                            </div>
+                            <div class="wish-progress">
+                                <div class="wish-progress-fill" style="width: ${Math.min(progress, 100)}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="financial-summary">
+                            <div class="summary-item" style="border-color: var(--success-green);">
+                                <div class="summary-value">₹${wish.savedAmount.toLocaleString('en-IN')}</div>
+                                <div class="summary-label">Saved</div>
+                            </div>
+                            <div class="summary-item" style="border-color: var(--danger-red);">
+                                <div class="summary-value">₹${remaining.toLocaleString('en-IN')}</div>
+                                <div class="summary-label">Remaining</div>
+                            </div>
+                            ${wish.targetDate ? `
+                                <div class="summary-item" style="border-color: var(--warning-orange);">
+                                    <div class="summary-value">${monthsLeft}</div>
+                                    <div class="summary-label">Months Left</div>
+                                </div>
+                                <div class="summary-item" style="border-color: var(--primary-blue);">
+                                    <div class="summary-value">${daysLeft || 0}</div>
+                                    <div class="summary-label">Days Left</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${!isCompleted ? `
+                            <div class="savings-intelligence">
+                                <div class="intelligence-header">
+                                    <div class="intelligence-icon">🧠</div>
+                                    <div>
+                                        <strong style="color: var(--success-green);">AI Savings Intelligence</strong>
+                                        <div style="font-size: 12px; color: var(--system-gray);">Personalized plan for ${wish.name}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="monthly-breakdown">
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-value">₹${requiredMonthlySaving.toLocaleString('en-IN')}</div>
+                                        <div class="breakdown-label">Monthly</div>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-value">₹${Math.ceil(requiredMonthlySaving/4).toLocaleString('en-IN')}</div>
+                                        <div class="breakdown-label">Weekly</div>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-value">₹${Math.ceil(requiredMonthlySaving/30).toLocaleString('en-IN')}</div>
+                                        <div class="breakdown-label">Daily</div>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <div class="breakdown-value">${((requiredMonthlySaving/(currentUser.monthlyBudget||20000))*100).toFixed(1)}%</div>
+                                        <div class="breakdown-label">Budget %</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: rgba(255,255,255,0.8); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                                    <strong>💡 Smart Tips for ${wish.name}:</strong><br>
+                                    ${generateGoalSpecificAdvice(wish, requiredMonthlySaving, feasibilityScore)}
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.05)); border-radius: 20px; margin: 25px 0;">
+                                <div style="font-size: 32px; margin-bottom: 15px;">🎉🏆🎉</div>
+                                <div style="font-size: 24px; font-weight: 900; color: var(--success-green); margin-bottom: 10px;">DREAM ACHIEVED!</div>
+                                <div style="font-size: 16px; font-weight: 600;">Congratulations! You've successfully saved for ${wish.name}!</div>
+                                <div style="font-size: 14px; color: var(--system-gray); margin-top: 10px;">Time to make that purchase and celebrate! 🥳</div>
+                            </div>
+                        `}
+                        
+                        ${wish.targetDate ? `
+                            <div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(0,122,255,0.1); border-radius: 15px;">
+                                📅 <strong>Target Date:</strong> ${formatDate(wish.targetDate)}
+                                ${daysLeft !== null ? ` • <strong>${daysLeft > 0 ? `${daysLeft} days to go` : 'Target date reached!'}</strong>` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        ${wish.description ? `
+                            <div style="margin: 20px 0; padding: 20px; background: linear-gradient(135deg, rgba(0,122,255,0.1), rgba(88,86,214,0.1)); border-radius: 15px; border-left: 5px solid var(--primary-blue);">
+                                <strong>💭 Why This Dream Matters:</strong><br>
+                                <em style="font-size: 15px; line-height: 1.6;">${wish.description}</em>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="action-buttons">
+                            ${!isCompleted ? `
+                                <button class="btn btn-success" onclick="addSavings(${wish.id})" style="flex: 1;">
+                                    💰 Add Savings
+                                </button>
+                                <button class="btn btn-warning" onclick="editDream(${wish.id})">
+                                    ✏️ Edit Dream
+                                </button>
+                            ` : `
+                                <button class="btn btn-success" onclick="markAsPurchased(${wish.id})" style="flex: 1;">
+                                    🛒 Mark as Purchased
+                                </button>
+                            `}
+                            <button class="btn btn-danger" onclick="deleteWish(${wish.id})">
+                                🗑️ Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function generateGoalSpecificAdvice(wish, monthlyRequired, feasibility) {
+            const budget = currentUser.monthlyBudget || 20000;
+            let advice = '';
+
+            // Category-specific advice
+            if (wish.category === 'electronics') {
+                advice += `• Wait for major sales (Diwali: 20-40% off)<br>• Check student discounts (additional 5-15%)<br>• Consider EMI options with 0% interest<br>`;
+            } else if (wish.category === 'travel') {
+                advice += `• Book 2-3 months in advance for best prices<br>• Use student travel packages<br>• Consider off-peak season travel<br>`;
+            } else if (wish.category === 'education') {
+                advice += `• Look for scholarships and grants<br>• Check for early bird discounts<br>• Consider online alternatives first<br>`;
+            }
+
+            // Feasibility-based advice
+            if (feasibility === 'excellent') {
+                advice += `• Perfect! Set automatic transfers<br>• Consider SIP investment for growth`;
+            } else if (feasibility === 'good') {
+                advice += `• Reduce dining out by ₹${Math.ceil(monthlyRequired*0.3).toLocaleString('en-IN')}/month<br>• Cut entertainment by 20%`;
+            } else if (feasibility === 'challenging') {
+                advice += `• Look for part-time income (₹${Math.ceil(monthlyRequired*0.4).toLocaleString('en-IN')}/month)<br>• Extend timeline by 2-3 months`;
+            } else {
+                advice += `• Consider extending timeline significantly<br>• Explore freelance opportunities<br>• Look for pre-owned options`;
+            }
+
+            return advice || '• Stay focused on your goal<br>• Track progress regularly<br>• Celebrate small milestones';
+        }
+
+        // Enhanced savings addition with smart suggestions
+        function addSavings(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (!wish) return;
+
+            const remaining = wish.targetAmount - wish.savedAmount;
+            const suggestionAmount = Math.min(remaining, Math.ceil(remaining * 0.1));
+            
+            const amount = prompt(`💰 Add Savings to "${wish.name}"\n\n📊 Current: ₹${wish.savedAmount.toLocaleString('en-IN')}\n🎯 Target: ₹${wish.targetAmount.toLocaleString('en-IN')}\n💎 Remaining: ₹${remaining.toLocaleString('en-IN')}\n\n💡 Suggested: ₹${suggestionAmount.toLocaleString('en-IN')}\n\nHow much would you like to add? (₹)`);
+            
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                const addAmount = parseFloat(amount);
+                wish.savedAmount += addAmount;
+                
+                if (wish.savedAmount >= wish.targetAmount) {
+                    wish.savedAmount = wish.targetAmount;
+                    showFlashMessage(`🎉 INCREDIBLE! You've achieved your dream "${wish.name}"! 🏆 Time to celebrate and make that purchase! This is a testament to your amazing financial discipline! 🥳✨`);
+                } else {
+                    const newProgress = ((wish.savedAmount / wish.targetAmount) * 100).toFixed(1);
+                    const newRemaining = wish.targetAmount - wish.savedAmount;
+                    showFlashMessage(`💰 Amazing! ₹${addAmount.toLocaleString('en-IN')} added to "${wish.name}"! 🎯 Progress: ${newProgress}% • Remaining: ₹${newRemaining.toLocaleString('en-IN')} • Keep pushing forward! 💪`);
+                }
+                
+                localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                updateWishboard();
+                updateStatistics();
+            }
+        }
+
+        function editDream(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (!wish) return;
+
+            const newAmount = prompt(`✏️ Edit Dream Target\n\nDream: ${wish.name}\nCurrent Target: ₹${wish.targetAmount.toLocaleString('en-IN')}\nSaved: ₹${wish.savedAmount.toLocaleString('en-IN')}\n\nNew target amount (₹):`);
+            
+            if (newAmount && !isNaN(newAmount) && parseFloat(newAmount) > 0) {
+                const oldAmount = wish.targetAmount;
+                wish.targetAmount = parseFloat(newAmount);
+                localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                updateWishboard();
+                updateStatistics();
+                
+                const change = wish.targetAmount > oldAmount ? 'increased' : 'decreased';
+                showFlashMessage(`✏️ Dream "${wish.name}" target ${change} to ₹${wish.targetAmount.toLocaleString('en-IN')}! Your savings plan has been updated! 🎯`);
+            }
+        }
+
+        function markAsPurchased(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (!wish) return;
+
+            if (confirm(`🛒 Congratulations on achieving "${wish.name}"! 🎉\n\nMark this dream as purchased and remove from wishboard?\n\nThis is a celebration of your financial success! 🏆`)) {
+                wishlist = wishlist.filter(w => w.id !== wishId);
+                localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                updateWishboard();
+                updateStatistics();
+                showFlashMessage(`🛒 "${wish.name}" marked as purchased! 🎉 You've successfully turned your dream into reality! Your dedication to saving has paid off magnificently! 👏✨`);
+            }
+        }
+
+        function deleteWish(wishId) {
+            const wish = wishlist.find(w => w.id === wishId);
+            if (!wish) return;
+
+            if (confirm(`🗑️ Remove Dream?\n\nAre you sure you want to delete "${wish.name}"?\n\nSaved: ₹${wish.savedAmount.toLocaleString('en-IN')}\nTarget: ₹${wish.targetAmount.toLocaleString('en-IN')}\n\nThis action cannot be undone.`)) {
+                wishlist = wishlist.filter(w => w.id !== wishId);
+                localStorage.setItem('backpack_wishlist', JSON.stringify(wishlist));
+                updateWishboard();
+                updateStatistics();
+                showFlashMessage(`🗑️ Dream "${wish.name}" removed from wishboard. Your other dreams await your attention! 💫`);
+            }
+        }
+
+        // Utility functions
+        function getCategoryIcon(category) {
+            const icons = {
+                electronics: '📱',
+                travel: '✈️',
+                education: '📚',
+                fashion: '👕',
+                health: '🏥',
+                vehicle: '🚗',
+                entertainment: '🎮',
+                other: '🌟'
+            };
+            return icons[category] || '🌟';
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                high: '#FF3B30',
+                medium: '#FF9500',
+                low: '#34C759'
+            };
+            return colors[priority] || '#8E8E93';
+        }
+
+        function getPriorityIcon(priority) {
+            const icons = {
+                high: '🔴',
+                medium: '🟡',
+                low: '🟢'
+            };
+            return icons[priority] || '⚪';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function animateValue(elementId, start, end, duration, prefix = '', suffix = '') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const range = end - start;
+            const startTime = Date.now();
+            
+            const updateValue = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = start + (range * progress);
+                
+                if (suffix === '%') {
+                    element.textContent = prefix + Math.round(current) + suffix;
+                } else {
+                    element.textContent = prefix + Math.round(current).toLocaleString('en-IN') + suffix;
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateValue);
+                }
+            };
+            
+            updateValue();
+        }
+
+        function showFlashMessage(message) {
+            const existingFlash = document.querySelector('.flash-message');
+            if (existingFlash) {
+                existingFlash.remove();
+            }
+
+            const flash = document.createElement('div');
+            flash.className = 'flash-message';
+            
+            flash.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 32px;">✨</span>
+                    <span style="flex: 1; font-size: 16px; line-height: 1.5;">${message}</span>
+                    <span onclick="this.parentElement.parentElement.remove()" style="cursor: pointer; font-size: 28px; font-weight: bold; opacity: 0.7; transition: opacity 0.3s; padding: 5px;">&times;</span>
+                </div>
+            `;
+            
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                if (flash.parentNode) {
+                    flash.style.animation = 'slideOutRight 0.6s ease forwards';
+                    setTimeout(() => flash.remove(), 600);
+                }
+            }, 7000);
+        }
+
+        function logout() {
+            if (confirm(`Are you sure you want to logout, ${currentUser.fullName || 'Student'}?\n\nYour dreams will be waiting for you when you return! 🌟`)) {
+                localStorage.removeItem('currentUser');
+                showFlashMessage('Logged out successfully! Keep dreaming big and achieving bigger! See you soon! 👋✨');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+
+        // ✅ CLEAN INITIALIZATION - NO SAMPLE DATA
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎒 Wishboard Loading with CLEAN user data...');
+            
+            updateUserProfile();
+            
+            // ✅ NO PREDEFINED WISHLIST - Start with completely clean data
+            updateWishboard();
+            updateStatistics();
+            
+            console.log('✅ Wishboard loaded successfully!');
+            console.log('✅ No sample wishes - completely clean start');
+            console.log('✅ Roll number shows actual user data:', currentUser.regNumber);
+        });
+    </script>
+</body>
+</html>

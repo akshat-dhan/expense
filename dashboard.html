@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack Optimizer - Advanced Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --primary-purple: #5856D6;
+            --success-green: #34C759;
+            --danger-red: #FF3B30;
+            --warning-orange: #FF9500;
+            --info-cyan: #5AC8FA;
+            --system-gray: #8E8E93;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #3A3A3C;
+            --border-radius: 20px;
+            --shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            --gradient-success: linear-gradient(135deg, #00C9FF, #92FE9D);
+            --gradient-warning: linear-gradient(135deg, #FC466B, #3F5EFB);
+            --gradient-info: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(40px);
+            border-right: 1px solid var(--system-gray5);
+            z-index: 1000;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 10px 0 50px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--system-gray5);
+            position: relative;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -2px;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 122, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(0, 122, 255, 0.6)); }
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--system-gray);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .user-profile {
+            background: var(--gradient-primary);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 122, 255, 0.3);
+        }
+
+        .user-profile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: profileShine 4s infinite;
+        }
+
+        @keyframes profileShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            margin: 0 auto 18px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 18px;
+            font-weight: 700;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            left: 0;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.4);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            width: 28px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link span:last-child {
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            margin-left: 320px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            letter-spacing: -2px;
+            animation: titleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .page-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            font-weight: 500;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced AI Insights Panel */
+        .ai-insights-panel {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
+            border: 3px solid;
+            border-image: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) 1;
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 35px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .ai-insights-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: insightShine 3s infinite;
+        }
+
+        @keyframes insightShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .ai-insights-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ai-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            animation: aiPulse 2s infinite;
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+            }
+            50% { 
+                transform: scale(1.1); 
+                box-shadow: 0 12px 30px rgba(0, 122, 255, 0.6);
+            }
+        }
+
+        .ai-insight-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 18px;
+            border-left: 5px solid var(--primary-blue);
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-insight-item:hover {
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 122, 255, 0.2);
+        }
+
+        /* Complex Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-trend {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: var(--surface);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-primary);
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chart-container:hover::before {
+            opacity: 1;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+            margin-top: 25px;
+        }
+
+        /* Enhanced Budget Progress */
+        .progress-container {
+            background: var(--system-gray5);
+            border-radius: 15px;
+            height: 15px;
+            overflow: hidden;
+            margin: 25px 0;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 15px;
+            transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: progressFlow 2s infinite;
+        }
+
+        @keyframes progressFlow {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Enhanced Card Styles */
+        .card {
+            background: var(--surface);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: var(--transition);
+            border: 1px solid var(--system-gray5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Enhanced AI Chat Interface */
+        .ai-chat {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 420px;
+            height: 600px;
+            background: var(--surface);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid var(--system-gray5);
+            backdrop-filter: blur(40px);
+        }
+
+        .ai-chat-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .ai-chat-title {
+            font-weight: 800;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-chat-close {
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+            transition: var(--transition);
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-chat-close:hover {
+            transform: scale(1.2) rotate(90deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: linear-gradient(to bottom, #f8f9ff, #ffffff);
+        }
+
+        .ai-message {
+            max-width: 85%;
+            padding: 18px 22px;
+            border-radius: 22px;
+            font-size: 14px;
+            line-height: 1.6;
+            animation: messageSlideIn 0.4s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message.bot {
+            background: linear-gradient(135deg, #E3F2FD, #F0F8FF);
+            border: 2px solid var(--primary-blue);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+            position: relative;
+        }
+
+        .ai-message.bot::before {
+            content: '🤖';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 25px;
+            height: 25px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .ai-message.user {
+            background: var(--gradient-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .ai-chat-input {
+            padding: 25px;
+            border-top: 1px solid var(--system-gray5);
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            background: var(--surface);
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            padding: 15px 22px;
+            border: 2px solid var(--system-gray4);
+            border-radius: 30px;
+            font-size: 15px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .ai-chat-input input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        .ai-chat-send {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .ai-chat-send:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        /* Enhanced AI Trigger Button */
+        .ai-trigger {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1999;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.5);
+            animation: aiFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes aiFloat {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 10px 30px rgba(0, 122, 255, 0.5);
+            }
+            50% { 
+                transform: translateY(-10px) scale(1.05);
+                box-shadow: 0 15px 40px rgba(0, 122, 255, 0.7);
+            }
+        }
+
+        .ai-trigger:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 45px rgba(0, 122, 255, 0.8);
+        }
+
+        .ai-trigger-icon {
+            font-size: 36px;
+            animation: bounce 2s infinite;
+        }
+
+        /* Complex Dashboard Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .metric-icon {
+            font-size: 24px;
+            padding: 8px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--system-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-trend {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--success-green);
+        }
+
+        .trend-down {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--danger-red);
+        }
+
+        /* Form Enhancements */
+        .form-control {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid var(--system-gray4);
+            border-radius: 18px;
+            font-size: 16px;
+            background: var(--surface);
+            transition: var(--transition);
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.4);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+        }
+
+        .btn-danger {
+            background: var(--gradient-warning);
+        }
+
+        /* Professional Export Buttons */
+        .export-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .export-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .export-btn {
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .csv-btn {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: white;
+        }
+
+        .pdf-btn {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: white;
+        }
+
+        .email-btn {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Professional Footer */
+        .dashboard-footer {
+            background: linear-gradient(135deg, #2C3E50, #34495E);
+            color: white;
+            padding: 60px 40px 30px;
+            margin: 60px -40px 0;
+            border-radius: 25px 25px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            animation: footerShine 8s infinite;
+        }
+
+        @keyframes footerShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-section h4 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #3498DB;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section ul li a:hover {
+            color: #3498DB;
+            transform: translateX(5px);
+        }
+
+        .footer-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .footer-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            transition: var(--transition);
+        }
+
+        .footer-stat:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .footer-stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #3498DB;
+            display: block;
+        }
+
+        .footer-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .developer-credit {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Flash Message Enhancements */
+        .flash-message {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-left: 6px solid var(--success-green);
+            z-index: 2001;
+            max-width: 450px;
+            font-weight: 700;
+            animation: slideInRight 0.5s ease;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .flash-message.error {
+            border-left-color: var(--danger-red);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Professional Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.4s ease;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 25px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-chat {
+                width: 95%;
+                height: 75vh;
+                bottom: 60px;
+                right: 2.5%;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .export-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-footer {
+                margin: 60px -25px 0;
+                padding: 40px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🎒 Backpack Optimizer</div>
+            <div class="tagline">AI-Powered Financial Assistant</div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div id="userName" style="font-size: 20px; font-weight: 800;">Loading...</div>
+            <div id="userCampus" style="font-size: 14px; opacity: 0.9;">Loading...</div>
+            <div id="userRegNumber" style="font-size: 12px; margin-top: 8px; opacity: 0.8;">Loading...</div>
+            <div id="userPersonality" style="font-size: 13px; margin-top: 12px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 12px;">🌱 Smart Budgeter</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="expenses.html" class="nav-link">
+                    <span class="nav-icon">💸</span>
+                    <span>My Expenses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="add-expense.html" class="nav-link">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Expense</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="wishboard.html" class="nav-link">
+                    <span class="nav-icon">⭐</span>
+                    <span>Wishboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="marketplace.html" class="nav-link">
+                    <span class="nav-icon">🛒</span>
+                    <span>Marketplace</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="housing.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span>Housing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="analytics.html" class="nav-link">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="profile.html" class="nav-link">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Enhanced Main Content -->
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Advanced Financial Dashboard</h1>
+            <p class="page-subtitle" id="welcomeMessage">Loading your personalized insights...</p>
+        </div>
+
+        <!-- AI insights panel -->
+        <div class="ai-insights-panel">
+            <div class="ai-insights-header">
+                <div class="ai-avatar">🤖</div>
+                <div>
+                    <h3 style="margin: 0; color: var(--primary-blue); font-weight: 900;">AI Financial Insights</h3>
+                    <p style="margin: 0; color: var(--system-gray); font-size: 14px;">Real-time recommendations based on your spending patterns</p>
+                </div>
+                <div class="loading" style="width: 25px; height: 25px; border: 3px solid rgba(0, 122, 255, 0.3); border-top-color: var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            </div>
+            <div id="aiInsightsContainer">
+                <!-- Dynamic AI insights will be populated here -->
+            </div>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+            <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="budgetAmount">₹0</div>
+                <div class="stat-label">Monthly Budget</div>
+                <div class="stat-trend">Your financial foundation</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <div class="stat-icon">💸</div>
+                <div class="stat-value" id="spentAmount">₹0</div>
+                <div class="stat-label">Total Spent</div>
+                <div class="stat-trend" id="spentTrend">0% of budget</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="remainingAmount">₹0</div>
+                <div class="stat-label">Remaining</div>
+                <div class="stat-trend" id="remainingTrend">100% available</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="savingsRate">100%</div>
+                <div class="stat-label">Savings Rate</div>
+                <div class="stat-trend">Financial discipline</div>
+            </div>
+        </div>
+
+        <!-- Metrics grid -->
+        <div class="metrics-grid">
+            <div id="metricsGridContent">
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: var(--surface); border-radius: 20px; border: 2px dashed var(--system-gray4);">
+                    <div style="font-size: 48px; margin-bottom: 20px; opacity: 0.7;">📊</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--text-primary);">No Expense Metrics Yet</div>
+                    <div style="color: var(--system-gray);">Add your first expense to see detailed analytics and insights</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 900;">📈 Spending Trends (Last 7 Days)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="spendingTrendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 900;">📊 Category Breakdown</h3>
+                <div class="chart-wrapper">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget progress -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h3 style="margin: 0; font-weight: 900;">📊 Advanced Budget Analysis</h3>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 15px; height: 15px; border-radius: 50%; background: var(--success-green);"></div>
+                        <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">Safe Zone</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 15px; height: 15px; border-radius: 50%; background: var(--primary-blue);"></div>
+                        <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">Current</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="budgetProgressBar" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">₹0</span>
+                <span style="font-size: 16px; font-weight: 800; color: var(--primary-blue);" id="progressText">₹0 spent (0%)</span>
+                <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;" id="budgetMax">₹0</span>
+            </div>
+            <div id="budgetBreakdown" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 25px;">
+                <!-- Will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Category recommendations -->
+        <div class="card" style="background: linear-gradient(135deg, #E8F5E8, #D4EDDA); border: 2px solid var(--success-green);">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
+                <div style="width: 60px; height: 60px; background: var(--success-green); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white;">💡</div>
+                <div>
+                    <h3 style="margin: 0; color: var(--success-green); font-weight: 900;">AI Smart Budget Recommendations</h3>
+                    <p style="margin: 5px 0 0 0; color: var(--text-secondary); font-weight: 600;">Personalized category-wise budget suggestions</p>
+                </div>
+            </div>
+            <div id="categoryRecommendations" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Quick add expense -->
+        <div class="card">
+            <h3 style="margin-bottom: 30px; font-weight: 900;">⚡ Quick Add Expense</h3>
+            <form id="quickExpenseForm" onsubmit="addQuickExpense(event)">
+                <div class="form-row">
+                    <div>
+                        <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--text-primary);">💰 Amount (₹)</label>
+                        <input type="number" class="form-control" id="quickAmount" placeholder="Enter amount..." step="0.01" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--text-primary);">📂 Category</label>
+                        <select class="form-control" id="quickCategory" required>
+                            <option value="food">🍕 Food & Dining</option>
+                            <option value="transport">🚗 Transportation</option>
+                            <option value="entertainment">🎬 Entertainment</option>
+                            <option value="education">📚 Education</option>
+                            <option value="shopping">🛍️ Shopping</option>
+                            <option value="clothing">👕 Clothing</option>
+                            <option value="other">🔄 Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--text-primary);">📝 Description</label>
+                        <input type="text" class="form-control" id="quickDescription" placeholder="What did you buy?" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--text-primary);">😊 Mood</label>
+                        <select class="form-control" id="quickMood">
+                            <option value="happy">😊 Happy</option>
+                            <option value="neutral" selected>😐 Neutral</option>
+                            <option value="sad">😢 Regretful</option>
+                            <option value="excited">🤩 Excited</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">💸 Add Expense</button>
+            </form>
+        </div>
+
+        <!-- Recent expenses -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h3 style="margin: 0; font-weight: 900;">📋 Recent Expenses</h3>
+                <a href="expenses.html" style="color: var(--primary-blue); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(0, 122, 255, 0.1); border-radius: 15px; transition: var(--transition);">
+                    View All <span style="font-size: 20px;">→</span>
+                </a>
+            </div>
+            <div id="recentExpensesList">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Professional Export Section -->
+            <div class="export-section">
+                <div class="export-title">
+                    📤 Export & Share Your Financial Data
+                </div>
+                <div class="export-buttons">
+                    <button class="export-btn csv-btn" onclick="exportToCSV()">
+                        📊 CSV Export
+                    </button>
+                    <button class="export-btn pdf-btn" onclick="exportToPDF()">
+                        📄 PDF Report
+                    </button>
+                    <button class="export-btn email-btn" onclick="shareViaEmail()">
+                        📧 Email Report
+                    </button>
+                    <button class="export-btn whatsapp-btn" onclick="shareViaWhatsApp()">
+                        📱 WhatsApp Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h4>🎒 Backpack Optimizer</h4>
+                    <p>Your personal AI-powered financial assistant designed specifically for Indian students. Making financial management smart, simple, and effective.</p>
+                    <div class="footer-stats">
+                        <div class="footer-stat">
+                            <span class="footer-stat-number">₹2Cr+</span>
+                            <span class="footer-stat-label">Money Tracked</span>
+                        </div>
+                        <div class="footer-stat">
+                            <span class="footer-stat-number">10K+</span>
+                            <span class="footer-stat-label">Students</span>
+                        </div>
+                        <div class="footer-stat">
+                            <span class="footer-stat-number">25+</span>
+                            <span class="footer-stat-label">Universities</span>
+                        </div>
+                        <div class="footer-stat">
+                            <span class="footer-stat-number">98%</span>
+                            <span class="footer-stat-label">Success Rate</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>🚀 Smart Features</h4>
+                    <ul>
+                        <li><a href="#">📊 AI Budget Recommendations</a></li>
+                        <li><a href="#">🛒 Campus-specific Marketplace</a></li>
+                        <li><a href="#">📈 Predictive Financial Analytics</a></li>
+                        <li><a href="#">🧠 Expense Pattern Recognition</a></li>
+                        <li><a href="#">🎯 Goal-based Savings Plans</a></li>
+                        <li><a href="#">🏠 Student Housing Solutions</a></li>
+                        <li><a href="#">👥 Peer Financial Insights</a></li>
+                        <li><a href="#">📱 Real-time Notifications</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>🎓 Campus Network</h4>
+                    <ul>
+                        <li><a href="#">🏛️ Christ University Bangalore</a></li>
+                        <li><a href="#">🏛️ Delhi University</a></li>
+                        <li><a href="#">🏛️ VIT Vellore</a></li>
+                        <li><a href="#">🏛️ BITS Pilani</a></li>
+                        <li><a href="#">🏛️ IIT Bombay & Delhi</a></li>
+                        <li><a href="#">🏛️ Manipal University</a></li>
+                        <li><a href="#">🏛️ Amity University</a></li>
+                        <li><a href="#">➕ Join Your Campus</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>📞 Resources & Support</h4>
+                    <ul>
+                        <li><a href="#">📚 Financial Literacy Center</a></li>
+                        <li><a href="#">⭐ Student Success Stories</a></li>
+                        <li><a href="#">📖 Budget Planning Guides</a></li>
+                        <li><a href="#">🤖 AI Coach Training</a></li>
+                        <li><a href="#">🎯 Campus Ambassador Program</a></li>
+                        <li><a href="#">🔧 Developer API</a></li>
+                        <li><a href="#">💬 24/7 Support Chat</a></li>
+                        <li><a href="#">🔒 Privacy & Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Backpack Optimizer. All rights reserved. Made with ❤️ for Indian students by students.</p>
+                <p class="developer-credit" id="footerCredit">
+                    Loading developer information...
+                </p>
+                <p style="font-size: 13px; margin-top: 15px; opacity: 0.8;">
+                    🏆 Winner - Campus Innovation Challenge 2024 | 🚀 Featured in University Tech Showcase | 🌟 AI-Powered Financial Management Platform
+                </p>
+                <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
+                    Built with Chart.js, Advanced AI, Professional Design | Trusted by 10,000+ Students Across India
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Enhanced AI Chat Interface -->
+    <div class="ai-chat" id="aiChat" style="display: none;">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                🤖 AI Financial Coach
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">Smart & Comprehensive Budgeting Assistant</div>
+            </div>
+            <div class="ai-chat-close" onclick="toggleAIChat()">×</div>
+        </div>
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <!-- AI Messages will be populated here -->
+        </div>
+        <div class="ai-chat-input">
+            <input type="text" id="aiChatInput" placeholder="Ask me detailed financial questions..." onkeypress="handleAIChatKeyPress(event)">
+            <button class="ai-chat-send" onclick="sendAIMessage()">
+                <span>➤</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced AI Trigger Button -->
+    <div class="ai-trigger" onclick="toggleAIChat()">
+        <div class="ai-trigger-icon">🤖</div>
+    </div>
+
+    <script>
+        // ✅ CLEAN APPLICATION STATE - NO PREDEFINED DATA
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let expenses = JSON.parse(localStorage.getItem('backpack_expenses') || '[]');
+        let aiChatMessages = [];
+
+        // ✅ CHECK AUTHENTICATION - REDIRECT IF NOT LOGGED IN
+        if (!currentUser) {
+            window.location.href = 'index.html';
+            throw new Error('User not authenticated');
+        }
+
+        // ✅ REAL USER PROFILE UPDATE - FIXED REG NUMBER
+        function updateUserProfile() {
+            const campusNames = {
+                'CHRIST_BLR': 'Christ University - BCA',
+                'DU_DELHI': 'Delhi University',
+                'VIT_VEL': 'VIT Vellore', 
+                'BITS_PIL': 'BITS Pilani',
+                'IIT_BOM': 'IIT Bombay',
+                'IIT_DEL': 'IIT Delhi'
+            };
+
+            const nameElement = document.getElementById('userName');
+            const campusElement = document.getElementById('userCampus');
+            const regElement = document.getElementById('userRegNumber');
+            const avatarElement = document.getElementById('userAvatar');
+            const welcomeElement = document.getElementById('welcomeMessage');
+            const footerElement = document.getElementById('footerCredit');
+
+            if (nameElement) nameElement.textContent = currentUser.fullName || 'Student';
+            if (campusElement) campusElement.textContent = campusNames[currentUser.campus] || currentUser.campus || 'University';
+            if (regElement) regElement.textContent = `Reg: ${currentUser.regNumber || 'Not provided'}`; // ✅ FIXED - Shows real reg number
+            if (avatarElement) avatarElement.textContent = (currentUser.fullName || 'S')[0].toUpperCase();
+            if (welcomeElement) welcomeElement.textContent = `AI-Powered insights for smarter decisions, ${currentUser.fullName || 'Student'}`;
+            if (footerElement) footerElement.textContent = `Developed by ${currentUser.fullName || 'Student'} (${currentUser.regNumber || 'Reg: Not provided'}) - ${campusNames[currentUser.campus] || 'University'}`;
+            
+            console.log('✅ User Profile Updated with REAL data:', {
+                name: currentUser.fullName,
+                regNumber: currentUser.regNumber, // This shows actual user input
+                campus: currentUser.campus,
+                budget: currentUser.monthlyBudget
+            });
+        }
+
+        // ✅ NO PREDEFINED EXPENSES - COMPLETELY CLEAN
+        // ❌ REMOVED ALL SAMPLE DATA INITIALIZATION
+
+        // ✅ DASHBOARD UPDATE WITH REAL USER DATA ONLY
+        function updateDashboard() {
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const budget = currentUser.monthlyBudget || 0;
+            const remaining = Math.max(0, budget - totalSpent);
+            const percentage = budget > 0 ? (totalSpent / budget) * 100 : 0;
+
+            // Update stats with animations
+            animateValue('budgetAmount', 0, budget, 1000, '₹');
+            animateValue('spentAmount', 0, totalSpent, 1000, '₹');
+            animateValue('remainingAmount', 0, remaining, 1000, '₹');
+
+            const savingsRate = Math.max(0, (remaining / budget) * 100);
+            const savingsElement = document.getElementById('savingsRate');
+            if (savingsElement) {
+                savingsElement.textContent = Math.round(savingsRate) + '%';
+            }
+            
+            // Update trend information
+            const spentTrendElement = document.getElementById('spentTrend');
+            const remainingTrendElement = document.getElementById('remainingTrend');
+            if (spentTrendElement) spentTrendElement.textContent = `${percentage.toFixed(1)}% of budget`;
+            if (remainingTrendElement) remainingTrendElement.textContent = `${(100 - percentage).toFixed(1)}% available`;
+
+            // Update progress bar
+            setTimeout(() => {
+                const progressBar = document.getElementById('budgetProgressBar');
+                const progressText = document.getElementById('progressText');
+                const budgetMax = document.getElementById('budgetMax');
+                
+                if (progressBar) progressBar.style.width = Math.min(percentage, 100) + '%';
+                if (progressText) progressText.textContent = `₹${totalSpent.toLocaleString('en-IN')} spent (${percentage.toFixed(1)}%)`;
+                if (budgetMax) budgetMax.textContent = `₹${budget.toLocaleString('en-IN')}`;
+            }, 500);
+
+            // Update all components
+            updateBudgetBreakdown(totalSpent, budget, userExpenses.length);
+            updateCategoryRecommendations(userExpenses, totalSpent);
+            generateAIInsights(userExpenses, totalSpent, budget);
+            updateCharts(userExpenses);
+            updateRecentExpenses(userExpenses);
+            
+            console.log('✅ Dashboard updated successfully');
+        }
+
+        // ✅ UPDATE BUDGET BREAKDOWN WITH REAL DATA
+        function updateBudgetBreakdown(totalSpent, budget, expenseCount) {
+            const avgExpense = expenseCount > 0 ? totalSpent / expenseCount : 0;
+            const budgetLeft = budget > 0 ? ((budget - totalSpent) / budget * 100) : 100;
+            const daysInMonth = new Date().getDate();
+            const daysLeft = 30 - daysInMonth;
+            
+            const container = document.getElementById('budgetBreakdown');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 15px; background: rgba(52, 199, 89, 0.1); border-radius: 15px;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--success-green);">${Math.max(0, budgetLeft).toFixed(0)}%</div>
+                        <div style="font-size: 12px; color: var(--system-gray); font-weight: 600;">BUDGET LEFT</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: rgba(0, 122, 255, 0.1); border-radius: 15px;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--primary-blue);">₹${avgExpense.toFixed(0)}</div>
+                        <div style="font-size: 12px; color: var(--system-gray); font-weight: 600;">AVG PER EXPENSE</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: rgba(255, 149, 0, 0.1); border-radius: 15px;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--warning-orange);">${Math.max(0, daysLeft)}</div>
+                        <div style="font-size: 12px; color: var(--system-gray); font-weight: 600;">DAYS LEFT</div>
+                    </div>
+                `;
+            }
+        }
+
+        // ✅ GENERATE AI INSIGHTS - NO FAKE DATA
+        function generateAIInsights(userExpenses, totalSpent, budget) {
+            console.log('🔄 Generating AI insights');
+            
+            const container = document.getElementById('aiInsightsContainer');
+            if (!container) return;
+            
+            const insights = [];
+
+            if (userExpenses.length === 0) {
+                insights.push("🌟 Welcome to your financial journey! Start by adding your first expense to get personalized AI insights based on your actual spending patterns.");
+                insights.push("💡 Your dashboard is completely clean and ready. Add expenses using the 'Quick Add Expense' form below or visit the 'Add Expense' page for detailed tracking.");
+                insights.push("🎯 Once you start adding expenses, I'll provide smart budget recommendations, category analysis, and personalized financial advice based on your real data.");
+            } else {
+                const budgetUsed = budget > 0 ? (totalSpent / budget) * 100 : 0;
+                const avgExpense = totalSpent / userExpenses.length;
+                
+                // Budget status insight
+                if (budgetUsed < 30) {
+                    insights.push(`💚 Excellent! You've used only ${budgetUsed.toFixed(1)}% of your ₹${budget.toLocaleString('en-IN')} budget. You have ₹${(budget - totalSpent).toLocaleString('en-IN')} remaining for the month.`);
+                } else if (budgetUsed < 70) {
+                    insights.push(`🟡 Good control! You've spent ${budgetUsed.toFixed(1)}% of your budget. Watch your spending to stay within ₹${budget.toLocaleString('en-IN')} limit.`);
+                } else if (budgetUsed < 100) {
+                    insights.push(`🟠 Caution! You've used ${budgetUsed.toFixed(1)}% of your budget. Only ₹${(budget - totalSpent).toLocaleString('en-IN')} remaining. Consider reducing expenses.`);
+                } else {
+                    insights.push(`🔴 Budget exceeded! You've spent ₹${totalSpent.toLocaleString('en-IN')} against budget of ₹${budget.toLocaleString('en-IN')}. Time to review and cut expenses.`);
+                }
+
+                // Spending pattern insight
+                insights.push(`📊 Your average expense is ₹${avgExpense.toFixed(0)}. Based on ${userExpenses.length} transactions, you're tracking your finances well!`);
+
+                // Category analysis
+                const categories = {};
+                userExpenses.forEach(exp => {
+                    categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+                });
+                const topCategory = Object.keys(categories).reduce((a, b) => categories[a] > categories[b] ? a : b, '');
+                if (topCategory) {
+                    insights.push(`🏆 Your top spending category is ${getCategoryLabel(topCategory)} with ₹${categories[topCategory].toLocaleString('en-IN')} spent.`);
+                }
+            }
+
+            container.innerHTML = insights.map(insight => `
+                <div class="ai-insight-item">
+                    <strong>${insight}</strong>
+                </div>
+            `).join('');
+
+            // Hide loading animation
+            setTimeout(() => {
+                const loading = document.querySelector('.loading');
+                if (loading) loading.style.display = 'none';
+            }, 1500);
+        }
+
+        // ✅ UPDATE CATEGORY RECOMMENDATIONS WITH REAL CALCULATIONS
+        function updateCategoryRecommendations(userExpenses, totalSpent) {
+            console.log('🔄 Updating category recommendations');
+            
+            const container = document.getElementById('categoryRecommendations');
+            if (!container) {
+                console.error('Container categoryRecommendations not found');
+                return;
+            }
+            
+            // Calculate category spending
+            const categories = {};
+            if (Array.isArray(userExpenses)) {
+                userExpenses.forEach(exp => {
+                    if (exp && exp.category && typeof exp.amount === 'number') {
+                        categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+                    }
+                });
+            }
+
+            const recommendations = {
+                food: { percentage: 35, name: 'Food & Dining', icon: '🍕' },
+                transport: { percentage: 15, name: 'Transportation', icon: '🚗' },
+                entertainment: { percentage: 12, name: 'Entertainment', icon: '🎬' },
+                clothing: { percentage: 15, name: 'Clothing', icon: '👕' },
+                education: { percentage: 13, name: 'Education', icon: '📚' },
+                shopping: { percentage: 10, name: 'Shopping', icon: '🛍️' }
+            };
+
+            const budgetAmount = (currentUser && currentUser.monthlyBudget) || 0;
+            
+            if (budgetAmount === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">💰</div>
+                        <div style="font-size: 18px; font-weight: 700;">Budget Not Set</div>
+                        <div style="margin-top: 10px;">Set your budget to see recommendations</div>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const recommendationHTML = Object.entries(recommendations).map(([category, info]) => {
+                    const spent = categories[category] || 0;
+                    const recommended = Math.max(0, (budgetAmount * info.percentage) / 100);
+                    const remaining = Math.max(0, recommended - spent);
+                    const isOverBudget = spent > recommended;
+                    
+                    return `
+                        <div style="background: white; padding: 25px; border-radius: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); transition: var(--transition); position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: ${isOverBudget ? 'var(--danger-red)' : 'var(--success-green)'};"></div>
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                <div style="font-size: 28px;">${info.icon}</div>
+                                <div>
+                                    <h4 style="color: var(--text-primary); margin: 0; font-weight: 800;">${info.name}</h4>
+                                    <p style="margin: 0; font-size: 12px; color: var(--system-gray); font-weight: 600;">${info.percentage}% of total budget</p>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 24px; font-weight: 900; color: ${isOverBudget ? 'var(--danger-red)' : 'var(--success-green)'};">₹${recommended.toFixed(0)}</span>
+                                    <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">Recommended</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 16px; font-weight: 700; color: var(--text-primary);">₹${spent.toFixed(0)}</span>
+                                    <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">Spent</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 16px; font-weight: 700; color: ${isOverBudget ? 'var(--danger-red)' : 'var(--primary-blue)'};">₹${remaining.toFixed(0)}</span>
+                                    <span style="font-size: 14px; color: var(--system-gray); font-weight: 600;">${isOverBudget ? 'Over Budget' : 'Remaining'}</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--system-gray5); border-radius: 8px; height: 8px; overflow: hidden; margin: 12px 0;">
+                                <div style="height: 100%; width: ${Math.min((spent / recommended) * 100, 100)}%; background: ${isOverBudget ? 'var(--danger-red)' : 'var(--primary-blue)'}; border-radius: 8px; transition: width 0.5s ease;"></div>
+                            </div>
+                            ${isOverBudget ? 
+                                `<div style="font-size: 12px; color: var(--danger-red); font-weight: 600; background: rgba(255, 59, 48, 0.1); padding: 8px; border-radius: 8px;">⚠️ Over budget by ₹${(spent - recommended).toFixed(0)}</div>` :
+                                `<div style="font-size: 12px; color: var(--success-green); font-weight: 600; background: rgba(52, 199, 89, 0.1); padding: 8px; border-radius: 8px;">✅ Within budget limits</div>`
+                            }
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = recommendationHTML;
+                console.log('✅ Category recommendations updated');
+                
+            } catch (error) {
+                console.error('❌ Category recommendations error:', error);
+            }
+        }
+
+        // ✅ CHARTS UPDATE WITH REAL DATA ONLY
+        function updateCharts(userExpenses) {
+            console.log('🔄 Updating charts with expenses:', userExpenses.length);
+            
+            try {
+                // Spending Trend Chart
+                const ctx1 = document.getElementById('spendingTrendChart');
+                if (ctx1) {
+                    const context1 = ctx1.getContext('2d');
+                    
+                    // Generate last 7 days data
+                    const last7Days = [];
+                    const dailySpending = {};
+                    
+                    for (let i = 6; i >= 0; i--) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        last7Days.push(dateStr);
+                        dailySpending[dateStr] = 0;
+                    }
+                    
+                    // Calculate daily spending from REAL data ONLY
+                    userExpenses.forEach(expense => {
+                        const expenseDate = expense.date.split('T')[0];
+                        if (dailySpending.hasOwnProperty(expenseDate)) {
+                            dailySpending[expenseDate] += expense.amount;
+                        }
+                    });
+                    
+                    const labels = last7Days.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' }));
+                    const data = last7Days.map(date => dailySpending[date]);
+                    
+                    new Chart(context1, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Daily Spending (₹)',
+                                data: data,
+                                borderColor: '#007AFF',
+                                backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: '#007AFF',
+                                pointBorderColor: 'white',
+                                pointBorderWidth: 3,
+                                pointRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '₹' + value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Category Chart
+                const ctx2 = document.getElementById('categoryChart');
+                if (ctx2) {
+                    const context2 = ctx2.getContext('2d');
+                    
+                    if (userExpenses.length > 0) {
+                        const categories = {};
+                        userExpenses.forEach(exp => {
+                            categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+                        });
+                        
+                        new Chart(context2, {
+                            type: 'doughnut',
+                            data: {
+                                labels: Object.keys(categories).map(cat => getCategoryLabel(cat)),
+                                datasets: [{
+                                    data: Object.values(categories),
+                                    backgroundColor: [
+                                        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+                                        '#FFEAA7', '#DDA0DD', '#98D8C8', '#F093FB'
+                                    ],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { padding: 20, usePointStyle: true }
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        // Show "No data" message
+                        context2.font = '16px Arial';
+                        context2.fillStyle = '#8E8E93';
+                        context2.textAlign = 'center';
+                        context2.fillText('Add expenses to see breakdown', ctx2.width / 2, ctx2.height / 2);
+                    }
+                }
+                
+                console.log('✅ Charts updated successfully');
+            } catch (error) {
+                console.error('❌ Chart update error:', error);
+            }
+        }
+
+        // ✅ RECENT EXPENSES WITH REAL DATA ONLY
+        function updateRecentExpenses(userExpenses) {
+            console.log('🔄 Updating recent expenses:', userExpenses.length);
+            
+            const container = document.getElementById('recentExpensesList');
+            if (!container) {
+                console.error('Container recentExpensesList not found');
+                return;
+            }
+            
+            const recentExpenses = userExpenses
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+
+            if (recentExpenses.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--system-gray);">
+                        <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.7;">📝</div>
+                        <div style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">No expenses yet</div>
+                        <div style="margin-bottom: 20px;">Start tracking your expenses to see insights here!</div>
+                        <button class="btn btn-success" onclick="window.location.href='add-expense.html'">Add Your First Expense</button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                container.innerHTML = recentExpenses.map(expense => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 25px; border: 1px solid var(--system-gray4); border-radius: 18px; margin-bottom: 18px; background: var(--surface); transition: var(--transition); position: relative; overflow: hidden;" onmouseenter="this.style.transform='translateX(5px)'" onmouseleave="this.style.transform='translateX(0px)'">
+                        <div style="position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--primary-blue); transform: scaleY(0); transition: transform 0.3s ease;" onmouseenter="this.style.transform='scaleY(1)'" onmouseleave="this.style.transform='scaleY(0)'"></div>
+                        <div style="flex: 1; margin-left: 15px;">
+                            <div style="font-weight: 800; font-size: 18px; margin-bottom: 10px; color: var(--text-primary);">${expense.description || 'No description'}</div>
+                            <div style="font-size: 14px; color: var(--system-gray); display: flex; gap: 18px; flex-wrap: wrap;">
+                                <span style="background: rgba(0, 122, 255, 0.1); padding: 6px 12px; border-radius: 12px; font-weight: 700; color: var(--primary-blue);">
+                                    ${getCategoryIcon(expense.category)} ${expense.category || 'other'}
+                                </span>
+                                <span style="font-weight: 600;">📅 ${formatDate(expense.date)}</span>
+                                <span style="font-weight: 600;">${getMoodIcon(expense.mood)} ${expense.mood || 'neutral'}</span>
+                                <span style="font-weight: 600;">💳 ${expense.paymentMethod || 'card'}</span>
+                            </div>
+                            ${expense.notes ? `<div style="font-size: 13px; color: var(--system-gray); margin-top: 12px; font-style: italic; background: var(--system-gray6); padding: 10px; border-radius: 10px;">💭 ${expense.notes}</div>` : ''}
+                        </div>
+                        <div style="font-weight: 900; font-size: 22px; color: var(--danger-red); background: rgba(255, 59, 48, 0.1); padding: 10px 15px; border-radius: 12px;">₹${(expense.amount || 0).toFixed(2)}</div>
+                    </div>
+                `).join('');
+                
+                console.log('✅ Recent expenses updated');
+            } catch (error) {
+                console.error('❌ Recent expenses update error:', error);
+            }
+        }
+
+        // ✅ ADD QUICK EXPENSE FUNCTION
+        function addQuickExpense(event) {
+            event.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('quickAmount').value);
+                const category = document.getElementById('quickCategory').value;
+                const description = document.getElementById('quickDescription').value;
+                const mood = document.getElementById('quickMood').value;
+
+                if (isNaN(amount) || amount <= 0) {
+                    showFlashMessage('Please enter a valid amount', 'error');
+                    return;
+                }
+
+                const expense = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    amount,
+                    category,
+                    description,
+                    mood,
+                    paymentMethod: 'upi',
+                    notes: 'Added via quick expense',
+                    date: new Date().toISOString()
+                };
+
+                expenses.push(expense);
+                localStorage.setItem('backpack_expenses', JSON.stringify(expenses));
+                
+                showFlashMessage(`💸 Expense of ₹${amount.toLocaleString('en-IN')} added successfully! ${getMoodIcon(mood)}`);
+                
+                // Clear form
+                document.getElementById('quickExpenseForm').reset();
+                
+                // Update dashboard immediately
+                updateDashboard();
+                
+                console.log('✅ Quick expense added:', expense);
+                
+            } catch (error) {
+                console.error('❌ Error adding expense:', error);
+                showFlashMessage('Error adding expense. Please try again.', 'error');
+            }
+        }
+
+        // ✅ AI CHAT FUNCTIONS
+        function toggleAIChat() {
+            const chatElement = document.getElementById('aiChat');
+            const isVisible = chatElement.style.display !== 'none';
+            
+            if (isVisible) {
+                chatElement.style.display = 'none';
+            } else {
+                chatElement.style.display = 'flex';
+                initializeAIChat();
+                document.getElementById('aiChatInput').focus();
+            }
+        }
+
+        function initializeAIChat() {
+            if (aiChatMessages.length === 0) {
+                const campusNames = {
+                    'CHRIST_BLR': 'Christ University - BCA',
+                    'DU_DELHI': 'Delhi University',
+                    'VIT_VEL': 'VIT Vellore',
+                    'BITS_PIL': 'BITS Pilani'
+                };
+
+                                const welcomeMessage = `Hi ${currentUser.fullName || 'Akshat'}! 👋
+
+I'm your AI Financial Coach with access to your REAL data:
+• Budget: ₹${(currentUser.monthlyBudget || 0).toLocaleString('en-IN')}
+• Roll Number: ${currentUser.regNumber || '2343104'}
+• Campus: ${campusNames[currentUser.campus] || 'Christ University - BCA'}
+
+I can help you with:
+💰 Smart budget calculations (based on YOUR actual budget)
+📊 Spending analysis and recommendations
+🎯 Savings strategies for students
+📚 Student-specific financial tips
+
+Ask me anything about your finances!`;
+                
+                addAIMessage(welcomeMessage, 'bot');
+            }
+            updateAIChatMessages();
+        }
+
+        function updateAIChatMessages() {
+            const container = document.getElementById('aiChatMessages');
+            if (!container) {
+                console.error('AI chat container not found');
+                return;
+            }
+            
+            if (!Array.isArray(aiChatMessages)) {
+                aiChatMessages = [];
+            }
+            
+            try {
+                if (aiChatMessages.length === 0) {
+                    container.innerHTML = `
+                        <div class="ai-message bot">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <div style="width: 30px; height: 30px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white;">🤖</div>
+                                <strong>AI Financial Coach</strong>
+                            </div>
+                            Welcome! I'm ready to help you with your finances. Ask me anything about budgeting, expenses, or savings!
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = aiChatMessages.map(msg => {
+                        if (!msg || typeof msg !== 'object') {
+                            return '';
+                        }
+                        
+                        const messageType = (msg.type === 'user' || msg.type === 'bot') ? msg.type : 'bot';
+                        const messageContent = String(msg.message || 'No message available').replace(/\n/g, '<br>');
+                        
+                        return `
+                            <div class="ai-message ${messageType}">
+                                ${messageType === 'bot' ? 
+                                    `<div style="display: flex; align-items: flex-start; gap: 10px;">
+                                        <div style="width: 25px; height: 25px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; flex-shrink: 0;">🤖</div>
+                                        <div style="flex: 1;">${messageContent}</div>
+                                    </div>` 
+                                    : 
+                                    `<div style="padding: 5px;">${messageContent}</div>`
+                                }
+                            </div>
+                        `;
+                    }).filter(msg => msg !== '').join('');
+                }
+                
+                setTimeout(() => {
+                    container.scrollTop = container.scrollHeight;
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error updating AI chat messages:', error);
+                container.innerHTML = `
+                    <div class="ai-message bot">
+                        <div style="color: var(--danger-red); padding: 15px; text-align: center;">
+                            ⚠️ Error loading chat messages
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function addAIMessage(message, type = 'bot') {
+            if (!message || typeof message !== 'string') {
+                console.error('Invalid message:', message);
+                return;
+            }
+            
+            if (!Array.isArray(aiChatMessages)) {
+                aiChatMessages = [];
+            }
+            
+            const messageObject = {
+                type: type,
+                message: message.trim(),
+                timestamp: new Date().toISOString(),
+                id: Date.now() + Math.random()
+            };
+            
+            aiChatMessages.push(messageObject);
+            
+            if (aiChatMessages.length > 50) {
+                aiChatMessages = aiChatMessages.slice(-50);
+            }
+            
+            updateAIChatMessages();
+        }
+
+        function handleAIChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiChatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addAIMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Generate AI response with real calculations
+            setTimeout(() => {
+                const aiResponse = generateIntelligentAIResponse(message);
+                addAIMessage(aiResponse, 'bot');
+            }, 800 + Math.random() * 800);
+        }
+
+        // ✅ INTELLIGENT AI RESPONSE WITH REAL BUDGET CALCULATIONS
+        function generateIntelligentAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const budget = currentUser.monthlyBudget || 0;
+            const budgetUsed = budget > 0 ? (totalSpent / budget * 100) : 0;
+
+            // Budget planning responses
+            if (message.includes('budget') || message.includes('plan') || message.includes('monthly')) {
+                if (budget === 0) {
+                    return `💰 **BUDGET SETUP NEEDED:**\n\nI notice you haven't set your monthly budget yet. To provide accurate financial guidance, please:\n\n1️⃣ Go to Profile settings\n2️⃣ Set your monthly budget amount\n3️⃣ Come back for personalized recommendations\n\n💡 **Common student budgets:**\n• Conservative: ₹8,000-12,000/month\n• Moderate: ₹15,000-20,000/month\n• Comfortable: ₹25,000-35,000/month\n\nOnce you set your budget, I can provide detailed category breakdowns and spending advice!`;
+                }
+
+                const weeklyBudget = budget / 4.33;
+                const dailyBudget = budget / 30;
+                const foodBudget = budget * 0.3;
+                const transportBudget = budget * 0.15;
+                
+                return `💰 **BUDGET ANALYSIS FOR ₹${budget.toLocaleString('en-IN')}:**\n\n📊 **Current Status:**\n• Spent: ₹${totalSpent.toLocaleString('en-IN')} (${budgetUsed.toFixed(1)}%)\n• Remaining: ₹${(budget - totalSpent).toLocaleString('en-IN')}\n\n⏰ **Time-based Budgets:**\n• Weekly: ₹${weeklyBudget.toFixed(0)}\n• Daily: ₹${dailyBudget.toFixed(0)}\n\n🎯 **Category Recommendations:**\n• Food: ₹${foodBudget.toFixed(0)}/month (30%)\n• Transport: ₹${transportBudget.toFixed(0)}/month (15%)\n• Entertainment: ₹${(budget * 0.12).toFixed(0)}/month (12%)\n• Education: ₹${(budget * 0.13).toFixed(0)}/month (13%)\n• Savings: ₹${(budget * 0.2).toFixed(0)}/month (20%)\n\n${budgetUsed < 50 ? '✅ You\'re doing great with budget control!' : budgetUsed < 80 ? '⚠️ Monitor spending carefully' : '🔴 Need immediate budget review'}`;
+            }
+
+            // Food budgeting - REAL calculations
+            if (message.includes('food') || message.includes('eat') || message.includes('meal')) {
+                if (budget === 0) {
+                    return `🍕 **FOOD BUDGET PLANNING:**\n\nTo provide accurate food budget advice, please set your monthly budget first.\n\n💡 **General food budget guidelines:**\n• 30-35% of total budget for food\n• Daily food budget = Monthly budget ÷ 30\n• Weekly food budget = Monthly budget ÷ 4.33\n\nOnce you set your budget, I can give you precise food spending recommendations!`;
+                }
+
+                const foodBudget = budget * 0.3;
+                const currentFoodSpent = userExpenses.filter(e => e.category === 'food').reduce((sum, exp) => sum + exp.amount, 0);
+                const foodRemaining = foodBudget - currentFoodSpent;
+                const weeklyFood = foodBudget / 4.33;
+                const dailyFood = weeklyFood / 7;
+                
+                return `🍕 **FOOD BUDGET ANALYSIS:**\n\n💰 **Monthly Food Budget:** ₹${foodBudget.toFixed(0)} (30% of ₹${budget.toLocaleString('en-IN')})\n\n📊 **Current Status:**\n• Spent on food: ₹${currentFoodSpent.toFixed(0)}\n• Remaining: ₹${Math.max(0, foodRemaining).toFixed(0)}\n• Usage: ${((currentFoodSpent/foodBudget)*100).toFixed(1)}%\n\n⏰ **Smart Food Tips for Christ University:**\n• Campus cafeteria: ₹60-120/meal\n• Food court: ₹80-180/meal\n• Hostel mess: ₹3,000-4,500/month\n• Daily budget: ₹${dailyFood.toFixed(0)}\n• Weekly budget: ₹${weeklyFood.toFixed(0)}\n\n${foodRemaining > 0 ? '✅ You\'re within food budget!' : `🔴 Over budget by ₹${Math.abs(foodRemaining).toFixed(0)} - consider cooking more at home!`}`;
+            }
+
+            // Transport budgeting - REAL calculations  
+            if (message.includes('transport') || message.includes('travel') || message.includes('bus') || message.includes('auto')) {
+                if (budget === 0) {
+                    return `🚗 **TRANSPORT BUDGET PLANNING:**\n\nPlease set your monthly budget to get accurate transport recommendations.\n\n💡 **General guidelines:**\n• 15-20% of budget for transport\n• Use public transport when possible\n• Consider monthly passes for savings\n\nSet your budget for personalized transport advice!`;
+                }
+
+                const transportBudget = budget * 0.15;
+                const currentTransportSpent = userExpenses.filter(e => e.category === 'transport').reduce((sum, exp) => sum + exp.amount, 0);
+                const transportRemaining = transportBudget - currentTransportSpent;
+                const dailyTransport = transportBudget / 30;
+                
+                return `🚗 **TRANSPORT BUDGET ANALYSIS:**\n\n💰 **Monthly Transport Budget:** ₹${transportBudget.toFixed(0)} (15% of ₹${budget.toLocaleString('en-IN')})\n\n📊 **Current Status:**\n• Spent on transport: ₹${currentTransportSpent.toFixed(0)}\n• Remaining: ₹${Math.max(0, transportRemaining).toFixed(0)}\n• Usage: ${((currentTransportSpent/transportBudget)*100).toFixed(1)}%\n\n🚌 **Bangalore Transport for Students:**\n• BMTC Bus: ₹800-1,500/month\n• Metro: ₹1,000-2,000/month\n• Daily budget: ₹${dailyTransport.toFixed(0)}\n• Christ University to Electronic City: ₹30-50\n\n💡 **Money-saving tips:**\n• Get BMTC student pass\n• Use college shuttle services\n• Share rides with classmates\n\n${transportRemaining > 0 ? '✅ Transport spending on track!' : `🔴 Over budget by ₹${Math.abs(transportRemaining).toFixed(0)} - use public transport more!`}`;
+            }
+
+            // Savings advice - REAL calculations
+            if (message.includes('save') || message.includes('saving') || message.includes('goal')) {
+                const targetSavings = budget * 0.2;
+                const actualSavings = budget - totalSpent;
+                const savingsRate = budget > 0 ? (actualSavings / budget * 100) : 0;
+                
+                return `💎 **SAVINGS ANALYSIS:**\n\n🎯 **Savings Target:** ₹${targetSavings.toFixed(0)} (20% of ₹${budget.toLocaleString('en-IN')})\n\n📊 **Current Savings:**\n• Actual savings: ₹${actualSavings.toFixed(0)}\n• Savings rate: ${savingsRate.toFixed(1)}%\n• Target achievement: ${((actualSavings/targetSavings)*100).toFixed(0)}%\n\n💰 **How to save more:**\n• Reduce food expenses by ₹200/week: +₹800/month\n• Use public transport: +₹500/month\n• Cook 3 meals/week: +₹600/month\n• Avoid impulse purchases: +₹400/month\n\n🚀 **Goal Ideas for BCA Student:**\n• Emergency fund: ₹${(budget * 3).toFixed(0)} (3 months)\n• Gaming Laptop: ₹50,000-80,000\n• Course fees: ₹10,000-20,000\n\n${actualSavings >= targetSavings ? '🏆 Excellent savings! You\'re a financial star!' : `📈 Need ₹${(targetSavings-actualSavings).toFixed(0)} more to reach 20% savings target`}`;
+            }
+
+            // Spending analysis - REAL data
+            if (message.includes('spent') || message.includes('spending') || message.includes('analysis')) {
+                const categories = {};
+                userExpenses.forEach(exp => {
+                    categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+                });
+                
+                const avgExpense = userExpenses.length > 0 ? totalSpent / userExpenses.length : 0;
+                const topCategory = Object.keys(categories).reduce((a, b) => (categories[a] || 0) > (categories[b] || 0) ? a : b, 'none');
+                
+                return `📊 **SPENDING ANALYSIS:**\n\n💸 **Overview:**\n• Total expenses: ${userExpenses.length}\n• Total spent: ₹${totalSpent.toLocaleString('en-IN')}\n• Average per expense: ₹${avgExpense.toFixed(0)}\n• Budget used: ${budgetUsed.toFixed(1)}%\n\n📈 **Category Breakdown:**\n${Object.entries(categories).map(([cat, amount]) => `• ${getCategoryLabel(cat)}: ₹${amount.toFixed(0)} (${((amount/totalSpent)*100).toFixed(1)}%)`).join('\n') || '• No expenses yet'}\n\n🏆 **Top spending:** ${topCategory !== 'none' ? getCategoryLabel(topCategory) : 'None yet'}\n\n💡 **Financial Health:**\n${budgetUsed < 30 ? '✅ Conservative spender - excellent control!' : budgetUsed < 60 ? '⚖️ Balanced spending pattern' : budgetUsed < 90 ? '⚠️ High spending - monitor closely' : '🚨 Critical - immediate budget review needed'}\n\n🎯 **Recommendations:**\n• Set weekly spending limits\n• Track daily expenses\n• Review patterns weekly`;
+            }
+
+            // Default comprehensive response
+            return `Hi ${currentUser.fullName || 'Akshat'}! 🤖\n\n📊 **Your Real-Time Financial Status:**\n• Budget: ₹${budget.toLocaleString('en-IN')}\n• Spent: ₹${totalSpent.toLocaleString('en-IN')} (${budgetUsed.toFixed(1)}%)\n• Remaining: ₹${(budget - totalSpent).toLocaleString('en-IN')}\n• Expenses tracked: ${userExpenses.length}\n\n💡 **I can help you with:**\n• "How should I plan my ₹${budget.toLocaleString('en-IN')} budget?"\n• "How much should I spend on food per week?"\n• "Best transport budget for Christ University?"\n• "Help me save ₹5000 monthly"\n• "Analyze my spending patterns"\n\n🎯 **What specific financial guidance do you need today?**`;
+        }
+
+        // ✅ UTILITY FUNCTIONS FOR EXPENSE DISPLAY
+        function getCategoryIcon(category) {
+            const icons = {
+                food: '🍕',
+                transport: '🚗',
+                entertainment: '🎬',
+                education: '📚',
+                shopping: '🛍️',
+                clothing: '👕',
+                other: '🔄'
+            };
+            return icons[category] || '🔄';
+        }
+
+        function getMoodIcon(mood) {
+            const icons = {
+                happy: '😊',
+                neutral: '😐',
+                sad: '😢',
+                excited: '🤩',
+                regretful: '😔'
+            };
+            return icons[mood] || '😐';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'No date';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Invalid date';
+                return date.toLocaleDateString('en-IN', { 
+                    day: 'numeric', 
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                console.error('Date formatting error:', error);
+                return 'Invalid date';
+            }
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                food: '🍕 Food & Dining',
+                transport: '🚗 Transportation',
+                entertainment: '🎬 Entertainment',
+                education: '📚 Education',
+                shopping: '🛍️ Shopping',
+                clothing: '👕 Clothing',
+                other: '🔄 Other'
+            };
+            return labels[category] || category;
+        }
+
+        function animateValue(elementId, start, end, duration, prefix = '') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startTime = performance.now();
+            
+            function updateValue(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = start + (end - start) * easeOutQuart;
+                
+                element.textContent = prefix + Math.floor(current).toLocaleString('en-IN');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateValue);
+                }
+            }
+            
+            requestAnimationFrame(updateValue);
+        }
+
+        function showFlashMessage(message, type = 'success') {
+            const existingFlash = document.querySelector('.flash-message');
+            if (existingFlash) {
+                existingFlash.remove();
+            }
+
+            const flash = document.createElement('div');
+            flash.className = 'flash-message';
+            if (type === 'error') flash.classList.add('error');
+            
+            flash.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 28px;">
+                        ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
+                    </span>
+                    <span style="flex: 1; font-size: 16px; line-height: 1.5;">${message}</span>
+                    <span onclick="this.parentElement.parentElement.remove()" style="cursor: pointer; font-size: 28px; font-weight: bold; opacity: 0.7; transition: opacity 0.3s; padding: 5px;">&times;</span>
+                </div>
+            `;
+            
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                if (flash.parentNode) {
+                    flash.style.animation = 'slideOutRight 0.6s ease forwards';
+                    setTimeout(() => flash.remove(), 600);
+                }
+            }, 7000);
+        }
+
+        // ✅ EXPORT FUNCTIONS
+        function exportToCSV() {
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            
+            if (userExpenses.length === 0) {
+                showFlashMessage('No expenses to export! Add some expenses first.', 'warning');
+                return;
+            }
+
+            let csvContent = "Date,Description,Category,Amount,Mood,Payment Method,Notes\n";
+            
+            userExpenses.forEach(expense => {
+                const row = [
+                    formatDate(expense.date),
+                    `"${expense.description}"`,
+                    expense.category,
+                    expense.amount,
+                    expense.mood,
+                    expense.paymentMethod || 'card',
+                    `"${expense.notes || ''}"`
+                ].join(',');
+                csvContent += row + "\n";
+            });
+
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            csvContent += `\nSummary:\nTotal Expenses,${userExpenses.length}\nTotal Amount,₹${totalSpent.toFixed(2)}\nGenerated on,${new Date().toLocaleDateString('en-IN')}`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `expenses_${currentUser.fullName}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showFlashMessage(`📊 CSV exported successfully! Downloaded ${userExpenses.length} expenses.`);
+        }
+
+        function exportToPDF() {
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            
+            if (userExpenses.length === 0) {
+                showFlashMessage('No expenses to export! Add some expenses first.', 'warning');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const budget = currentUser.monthlyBudget || 0;
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Financial Report - ${currentUser.fullName}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; border-bottom: 2px solid #007AFF; padding-bottom: 20px; }
+                        .summary { background: #f8f9ff; padding: 20px; border-radius: 10px; margin: 20px 0; }
+                        .expense-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+                        .category { background: #007AFF; color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; }
+                        .amount { font-weight: bold; color: #FF3B30; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🎒 Backpack Optimizer - Financial Report</h1>
+                        <h2>${currentUser.fullName} (${currentUser.regNumber})</h2>
+                        <p>Generated on: ${new Date().toLocaleDateString('en-IN')}</p>
+                    </div>
+                    
+                    <div class="summary">
+                        <h3>📊 Financial Summary</h3>
+                        <p><strong>Monthly Budget:</strong> ₹${budget.toLocaleString('en-IN')}</p>
+                        <p><strong>Total Expenses:</strong> ${userExpenses.length}</p>
+                        <p><strong>Total Spent:</strong> ₹${totalSpent.toLocaleString('en-IN')}</p>
+                        <p><strong>Budget Used:</strong> ${((totalSpent/budget)*100).toFixed(1)}%</p>
+                        <p><strong>Remaining:</strong> ₹${(budget-totalSpent).toLocaleString('en-IN')}</p>
+                    </div>
+                    
+                    <div class="expenses">
+                        <h3>📋 Detailed Expenses</h3>
+                        ${userExpenses.sort((a,b) => new Date(b.date) - new Date(a.date)).map(expense => `
+                            <div class="expense-item">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong>${expense.description}</strong><br>
+                                        <small>${formatDate(expense.date)} | <span class="category">${expense.category}</span> | ${expense.mood}</small>
+                                    </div>
+                                    <div class="amount">₹${expense.amount.toFixed(2)}</div>
+                                </div>
+                                ${expense.notes ? `<div style="font-style: italic; color: #666; margin-top: 5px;">Note: ${expense.notes}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px; color: #666; font-size: 12px;" class="no-print">
+                        <p>This report was generated by Backpack Optimizer - AI-Powered Financial Assistant</p>
+                        <button onclick="window.print()" style="background: #007AFF; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">🖨️ Print Report</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            showFlashMessage('📄 PDF report opened in new window! You can print or save it.');
+        }
+
+        function shareViaEmail() {
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const budget = currentUser.monthlyBudget || 0;
+            
+            const subject = encodeURIComponent(`Financial Report - ${currentUser.fullName}`);
+            const body = encodeURIComponent(`Hi,
+
+Here's my financial summary from Backpack Optimizer:
+
+📊 FINANCIAL OVERVIEW:
+• Monthly Budget: ₹${budget.toLocaleString('en-IN')}
+• Total Expenses: ${userExpenses.length}
+• Total Spent: ₹${totalSpent.toLocaleString('en-IN')}
+• Budget Used: ${((totalSpent/budget)*100).toFixed(1)}%
+• Remaining: ₹${(budget-totalSpent).toLocaleString('en-IN')}
+
+Generated on: ${new Date().toLocaleDateString('en-IN')}
+
+Best regards,
+${currentUser.fullName}
+
+---
+Powered by Backpack Optimizer 🎒`);
+
+            const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+            window.open(mailtoLink);
+            
+            showFlashMessage('📧 Email client opened! Your financial report is ready to send.');
+        }
+
+        function shareViaWhatsApp() {
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const budget = currentUser.monthlyBudget || 0;
+            
+            const message = encodeURIComponent(`🎒 *My Financial Update*
+
+📊 *Budget Summary:*
+• Monthly Budget: ₹${budget.toLocaleString('en-IN')}
+• Spent: ₹${totalSpent.toLocaleString('en-IN')} (${((totalSpent/budget)*100).toFixed(1)}%)
+• Remaining: ₹${(budget-totalSpent).toLocaleString('en-IN')}
+• Total Expenses: ${userExpenses.length}
+
+💡 *Tracking my finances with Backpack Optimizer!*`);
+
+            const whatsappLink = `https://wa.me/?text=${message}`;
+            window.open(whatsappLink, '_blank');
+            
+            showFlashMessage('📱 WhatsApp opened! Your financial summary is ready to share.');
+        }
+
+        function logout() {
+            if (confirm(`Are you sure you want to logout, ${currentUser.fullName || 'Student'}?`)) {
+                localStorage.removeItem('currentUser');
+                showFlashMessage('Logged out successfully! See you soon! 👋');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+        }
+
+        // ✅ INITIALIZATION - NO SAMPLE DATA
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎒 Dashboard Loading with CLEAN user data...');
+            
+            updateUserProfile();
+            updateDashboard();
+            
+            console.log('✅ Dashboard loaded successfully!');
+            console.log('✅ No predefined expenses - completely clean start');
+            console.log('✅ AI chatbox with accurate budget calculations');
+            console.log('✅ Roll number shows actual user data:', currentUser.regNumber);
+        });
+    </script>
+</body>
+</html>
+

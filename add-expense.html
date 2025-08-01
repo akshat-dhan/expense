@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack Optimizer - Add Expense</title>
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --primary-purple: #5856D6;
+            --success-green: #34C759;
+            --danger-red: #FF3B30;
+            --warning-orange: #FF9500;
+            --system-gray: #8E8E93;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #3A3A3C;
+            --border-radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--system-gray5);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--system-gray5);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--system-gray);
+            font-weight: 500;
+        }
+
+        .user-profile {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--system-gray4);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background: var(--surface);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--primary-purple);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+        }
+
+        .btn-secondary {
+            background: var(--system-gray);
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🎒 Backpack Optimizer</div>
+            <div class="tagline">Smart budgeting for students</div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div id="userName">Akshat</div>
+            <div style="font-size: 12px; opacity: 0.8;" id="userCampus">CHRIST_BLR</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="expenses.html" class="nav-link">
+                    <span class="nav-icon">💸</span>
+                    <span>My Expenses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="add-expense.html" class="nav-link active">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Expense</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="wishboard.html" class="nav-link">
+                    <span class="nav-icon">⭐</span>
+                    <span>Wishboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="marketplace.html" class="nav-link">
+                    <span class="nav-icon">🛒</span>
+                    <span>Marketplace</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="housing.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span>Housing</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="analytics.html" class="nav-link">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="profile.html" class="nav-link">
+                    <span class="nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">➕ Add Expense</h1>
+            <p class="page-subtitle">Record your spending to track your budget</p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 20px;">💰 Record Your Expense</h3>
+            <form id="expenseForm" onsubmit="addExpense(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="expenseAmount">💰 Amount (₹)</label>
+                        <input type="number" class="form-control" id="expenseAmount" placeholder="0.00" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="expenseCategory">📂 Category</label>
+                        <select class="form-control" id="expenseCategory" required>
+                            <option value="food">🍕 Food & Dining</option>
+                            <option value="transport">🚗 Transportation</option>
+                            <option value="entertainment">🎬 Entertainment</option>
+                            <option value="education">📚 Education</option>
+                            <option value="shopping">🛍️ Shopping</option>
+                            <option value="other">🔄 Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="expenseDescription">📝 Description</label>
+                    <input type="text" class="form-control" id="expenseDescription" placeholder="Describe your expense in detail" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="expenseMood">😊 How did this purchase make you feel?</label>
+                        <select class="form-control" id="expenseMood">
+                            <option value="happy">😊 Happy - Great purchase!</option>
+                            <option value="neutral" selected>😐 Neutral - Necessary expense</option>
+                            <option value="sad">😢 Regretful - Wish I didn't buy this</option>
+                            <option value="excited">🤩 Excited - Love this purchase!</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="expensePayment">💳 Payment Method</label>
+                        <select class="form-control" id="expensePayment">
+                            <option value="cash">💵 Cash</option>
+                            <option value="card">💳 Card</option>
+                            <option value="upi">📱 UPI</option>
+                            <option value="other">🔄 Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="expenseNotes">📄 Additional Notes (Optional)</label>
+                    <textarea class="form-control" id="expenseNotes" rows="3" placeholder="Any additional details about this expense..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 16px; margin-top: 30px;">
+                    <button type="submit" class="btn btn-success btn-large">💾 Save Expense</button>
+                    <a href="dashboard.html" class="btn btn-secondary btn-large">← Back to Dashboard</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- AI Tips Section -->
+        <div class="card" style="background: linear-gradient(135deg, #F0F8FF, #E6F3FF); border: 2px solid var(--primary-blue);">
+            <h3 style="color: var(--primary-blue); margin-bottom: 16px;">🤖 Smart Expense Tips</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4 style="color: var(--primary-blue); margin-bottom: 12px;">💡 Category Tips</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            🍕 <strong>Food:</strong> Try cooking more meals at home to save 20-30%
+                        </li>
+                        <li style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            🚗 <strong>Transport:</strong> Use public transport or carpooling to reduce costs
+                        </li>
+                        <li style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            🎬 <strong>Entertainment:</strong> Look for student discounts and free events
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary-blue); margin-bottom: 12px;">📊 Your Budget Status</h4>
+                    <div id="budgetStatus" style="font-size: 14px; line-height: 1.6;">
+                        <div style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            💰 <strong>Monthly Budget:</strong> ₹<span id="monthlyBudgetDisplay">20,000</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            📈 <strong>Spent so far:</strong> ₹<span id="spentSoFarDisplay">2,130</span>
+                        </div>
+                        <div style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
+                            ⭐ <strong>Remaining:</strong> ₹<span id="remainingDisplay">17,870</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let expenses = JSON.parse(localStorage.getItem('backpack_expenses') || '[]');
+
+        // Check if user is logged in
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        }
+
+        function updateUserProfile() {
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userCampus').textContent = currentUser.campus;
+            document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
+
+            // Update budget status
+            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
+            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const remaining = currentUser.monthlyBudget - totalSpent;
+
+            document.getElementById('monthlyBudgetDisplay').textContent = currentUser.monthlyBudget.toLocaleString();
+            document.getElementById('spentSoFarDisplay').textContent = totalSpent.toLocaleString();
+            document.getElementById('remainingDisplay').textContent = remaining.toLocaleString();
+        }
+
+        function addExpense(event) {
+            event.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+            const description = document.getElementById('expenseDescription').value;
+            const mood = document.getElementById('expenseMood').value;
+            const paymentMethod = document.getElementById('expensePayment').value;
+            const notes = document.getElementById('expenseNotes').value;
+
+            const expense = {
+                id: Date.now(),
+                userId: currentUser.id,
+                amount,
+                category,
+                description,
+                mood,
+                paymentMethod,
+                notes,
+                date: new Date().toISOString()
+            };
+
+            expenses.push(expense);
+            localStorage.setItem('backpack_expenses', JSON.stringify(expenses));
+            
+            showFlashMessage(`💸 Expense of ₹${amount.toFixed(2)} recorded successfully! Great job tracking! 🌟`);
+            
+            // Clear form
+            document.getElementById('expenseForm').reset();
+            
+            // Update budget status
+            updateUserProfile();
+        }
+
+        function showFlashMessage(message) {
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1500;
+                background: white; padding: 16px 20px; border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-left: 4px solid #34C759;
+                animation: slideIn 0.3s ease;
+            `;
+            flash.innerHTML = `${message} <span onclick="this.parentElement.remove()" style="cursor:pointer;float:right;">&times;</span>`;
+            document.body.appendChild(flash);
+
+            setTimeout(() => {
+                if (flash.parentNode) flash.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // Initialize page
+        updateUserProfile();
+    </script>
+</body>
+</html>
