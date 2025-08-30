@@ -2,6 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- 📱 PWA MANIFEST -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- 🍎 iOS SPECIFIC -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Backpack Optimizer">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+
+<!-- 🤖 ANDROID/CHROME -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#007AFF">
+
+<!-- 🪟 WINDOWS -->
+<meta name="msapplication-TileColor" content="#007AFF">
+<meta name="msapplication-TileImage" content="/icons/icon-192.png">
+
+<!-- 🔍 SEO & SOCIAL -->
+<meta name="application-name" content="Backpack Optimizer">
+<meta name="description" content="AI-powered financial management for Indian students">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backpack Optimizer - My Expenses</title>
     <style>
@@ -37,6 +59,139 @@
             line-height: 1.6;
             min-height: 100vh;
         }
+/* 📱 MOBILE HAMBURGER MENU BUTTON */
+.mobile-menu-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: none; /* Hidden on desktop */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
+}
+
+.hamburger {
+    width: 24px;
+    height: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger span {
+    width: 100%;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* 📱 HAMBURGER ANIMATION WHEN OPEN */
+.mobile-menu-toggle.active .hamburger span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* 📱 MOBILE OVERLAY */
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* 📱 MOBILE RESPONSIVE SIDEBAR */
+@media (max-width: 768px) {
+    /* Show mobile menu button */
+    .mobile-menu-toggle {
+        display: flex !important;
+    }
+    
+    /* Hide sidebar by default */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        width: 300px; /* Slightly smaller on mobile */
+    }
+    
+    /* Show sidebar when open */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Adjust main content */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 80px 25px 25px 25px !important; /* Extra top padding for menu button */
+    }
+    
+    /* Adjust other fixed elements */
+    .ai-trigger {
+        bottom: 20px !important;
+        right: 20px !important;
+    }
+    
+    .ai-chat {
+        width: 95% !important;
+        height: 85vh !important;
+        bottom: 10px !important;
+        right: 2.5% !important;
+        left: 2.5% !important;
+    }
+    
+    /* Fix for form pages */
+    .form-container {
+        margin-left: 0 !important;
+        padding: 80px 20px 20px 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 280px !important; /* Even smaller for very small screens */
+    }
+    
+    .main-content {
+        padding: 70px 15px 15px 15px !important;
+    }
+    
+    .mobile-menu-toggle {
+        width: 45px !important;
+        height: 45px !important;
+        top: 15px !important;
+        left: 15px !important;
+    }
+}
 
         .sidebar {
             position: fixed;
@@ -651,6 +806,17 @@
             <h1 class="page-title">💸 My Expenses</h1>
             <p class="page-subtitle">Track every rupee, understand every pattern</p>
         </div>
+<!-- 📱 MOBILE MENU TOGGLE BUTTON -->
+<div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleSidebar()">
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<!-- 📱 MOBILE OVERLAY -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
 
         <!-- Statistics Overview -->
         <div class="stats-grid">
@@ -1183,6 +1349,79 @@
             console.log('✅ No sample expenses - completely clean start');
             console.log('✅ Roll number shows actual user data:', currentUser.regNumber);
         });
+        // 📱 MOBILE SIDEBAR TOGGLE FUNCTIONALITY
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (!sidebar || !menuToggle || !overlay) return;
+    
+    const isOpen = sidebar.classList.contains('mobile-open');
+    
+    if (isOpen) {
+        closeSidebar();
+    } else {
+        openSidebar();
+    }
+}
+
+function openSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (!sidebar || !menuToggle || !overlay) return;
+    
+    sidebar.classList.add('mobile-open');
+    menuToggle.classList.add('active');
+    overlay.classList.add('show');
+    
+    // Prevent body scroll when sidebar is open
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (!sidebar || !menuToggle || !overlay) return;
+    
+    sidebar.classList.remove('mobile-open');
+    menuToggle.classList.remove('active');
+    overlay.classList.remove('show');
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+}
+
+// Close sidebar when clicking navigation links (mobile)
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    });
+    
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    });
+    
+    // Handle keyboard navigation (ESC to close)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && window.innerWidth <= 768) {
+            closeSidebar();
+        }
+    });
+});
+
     </script>
 </body>
 </html>
