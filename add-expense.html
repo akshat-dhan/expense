@@ -2,401 +2,49 @@
 <html lang="en">
 <head>
     <!-- 📱 PWA MANIFEST -->
-<link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json">
 
-<!-- 🍎 iOS SPECIFIC -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Backpack Optimizer">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
-<link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+    <!-- 🍎 iOS SPECIFIC -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Backpack Optimizer">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
 
-<!-- 🤖 ANDROID/CHROME -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#007AFF">
+    <!-- 🤖 ANDROID/CHROME -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#007AFF">
 
-<!-- 🪟 WINDOWS -->
-<meta name="msapplication-TileColor" content="#007AFF">
-<meta name="msapplication-TileImage" content="/icons/icon-192.png">
+    <!-- 🪟 WINDOWS -->
+    <meta name="msapplication-TileColor" content="#007AFF">
+    <meta name="msapplication-TileImage" content="/icons/icon-192.png">
 
-<!-- 🔍 SEO & SOCIAL -->
-<meta name="application-name" content="Backpack Optimizer">
-<meta name="description" content="AI-powered financial management for Indian students">
+    <!-- 🔍 SEO & SOCIAL -->
+    <meta name="application-name" content="Backpack Optimizer">
+    <meta name="description" content="AI-powered financial management for Indian students">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backpack Optimizer - Add Expense</title>
-    <style>
-        :root {
-            --primary-blue: #007AFF;
-            --primary-purple: #5856D6;
-            --success-green: #34C759;
-            --danger-red: #FF3B30;
-            --warning-orange: #FF9500;
-            --system-gray: #8E8E93;
-            --system-gray4: #D1D1D6;
-            --system-gray5: #E5E5EA;
-            --system-gray6: #F2F2F7;
-            --surface: #FFFFFF;
-            --text-primary: #1C1C1E;
-            --text-secondary: #3A3A3C;
-            --border-radius: 16px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        /* 📱 MOBILE HAMBURGER MENU BUTTON */
-.mobile-menu-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    width: 50px;
-    height: 50px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: none; /* Hidden on desktop */
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
-    transition: all 0.3s ease;
-}
-
-.mobile-menu-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
-}
-
-.hamburger {
-    width: 24px;
-    height: 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.hamburger span {
-    width: 100%;
-    height: 3px;
-    background: white;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-/* 📱 HAMBURGER ANIMATION WHEN OPEN */
-.mobile-menu-toggle.active .hamburger span:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
-}
-
-.mobile-menu-toggle.active .hamburger span:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-toggle.active .hamburger span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* 📱 MOBILE OVERLAY */
-.mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.mobile-overlay.show {
-    display: block;
-    opacity: 1;
-}
-
-/* 📱 MOBILE RESPONSIVE SIDEBAR */
-@media (max-width: 768px) {
-    /* Show mobile menu button */
-    .mobile-menu-toggle {
-        display: flex !important;
-    }
     
-    /* Hide sidebar by default */
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-        width: 300px; /* Slightly smaller on mobile */
-    }
-    
-    /* Show sidebar when open */
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-    
-    /* Adjust main content */
-    .main-content {
-        margin-left: 0 !important;
-        padding: 80px 25px 25px 25px !important; /* Extra top padding for menu button */
-    }
-    
-    /* Adjust other fixed elements */
-    .ai-trigger {
-        bottom: 20px !important;
-        right: 20px !important;
-    }
-    
-    .ai-chat {
-        width: 95% !important;
-        height: 85vh !important;
-        bottom: 10px !important;
-        right: 2.5% !important;
-        left: 2.5% !important;
-    }
-    
-    /* Fix for form pages */
-    .form-container {
-        margin-left: 0 !important;
-        padding: 80px 20px 20px 20px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar {
-        width: 280px !important; /* Even smaller for very small screens */
-    }
-    
-    .main-content {
-        padding: 70px 15px 15px 15px !important;
-    }
-    
-    .mobile-menu-toggle {
-        width: 45px !important;
-        height: 45px !important;
-        top: 15px !important;
-        left: 15px !important;
-    }
-}
-
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--system-gray5);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--system-gray5);
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--primary-blue);
-            margin-bottom: 8px;
-        }
-
-        .tagline {
-            font-size: 14px;
-            color: var(--system-gray);
-            font-weight: 500;
-        }
-
-        .user-profile {
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            color: white;
-            text-align: center;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 auto 12px;
-        }
-
-        .nav-menu {
-            list-style: none;
-            padding: 0;
-        }
-
-        .nav-item {
-            margin-bottom: 8px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: var(--primary-blue);
-            color: white;
-            transform: translateX(4px);
-        }
-
-        .nav-icon {
-            font-size: 18px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            padding: 30px;
-            min-height: 100vh;
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 500;
-        }
-
-        .card {
-            background: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--system-gray4);
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            background: var(--surface);
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: var(--transition);
-        }
-
-        .btn:hover {
-            background: var(--primary-purple);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success-green);
-        }
-
-        .btn-secondary {
-            background: var(--system-gray);
-        }
-
-        .btn-large {
-            padding: 16px 32px;
-            font-size: 18px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="add-expense.css">
 </head>
 <body>
+    <!-- 📱 FIXED MOBILE MENU TOGGLE BUTTON -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- 📱 MOBILE OVERLAY -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <!-- Sidebar Navigation -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">🎒 Backpack Optimizer</div>
             <div class="tagline">Smart budgeting for students</div>
@@ -404,8 +52,8 @@
         
         <div class="user-profile">
             <div class="user-avatar" id="userAvatar">A</div>
-            <div id="userName">Akshat</div>
-            <div style="font-size: 12px; opacity: 0.8;" id="userCampus">CHRIST_BLR</div>
+            <div id="userName">Loading...</div>
+            <div style="font-size: 12px; opacity: 0.8;" id="userCampus">Loading...</div>
         </div>
 
         <ul class="nav-menu">
@@ -493,17 +141,6 @@
                         </select>
                     </div>
                 </div>
-                <!-- 📱 MOBILE MENU TOGGLE BUTTON -->
-<div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleSidebar()">
-    <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-</div>
-
-<!-- 📱 MOBILE OVERLAY -->
-<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
 
                 <div class="form-group">
                     <label class="form-label" for="expenseDescription">📝 Description</label>
@@ -568,10 +205,10 @@
                             💰 <strong>Monthly Budget:</strong> ₹<span id="monthlyBudgetDisplay">20,000</span>
                         </div>
                         <div style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
-                            📈 <strong>Spent so far:</strong> ₹<span id="spentSoFarDisplay">2,130</span>
+                            📈 <strong>Spent so far:</strong> ₹<span id="spentSoFarDisplay">0</span>
                         </div>
                         <div style="margin-bottom: 8px; padding: 8px; background: rgba(0,122,255,0.1); border-radius: 8px;">
-                            ⭐ <strong>Remaining:</strong> ₹<span id="remainingDisplay">17,870</span>
+                            ⭐ <strong>Remaining:</strong> ₹<span id="remainingDisplay">20,000</span>
                         </div>
                     </div>
                 </div>
@@ -579,161 +216,7 @@
         </div>
     </div>
 
-    <script>
-        // Application state
-        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        let expenses = JSON.parse(localStorage.getItem('backpack_expenses') || '[]');
-
-        // Check if user is logged in
-        if (!currentUser) {
-            window.location.href = 'index.html';
-        }
-
-        function updateUserProfile() {
-            document.getElementById('userName').textContent = currentUser.username;
-            document.getElementById('userCampus').textContent = currentUser.campus;
-            document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
-
-            // Update budget status
-            const userExpenses = expenses.filter(e => e.userId === currentUser.id);
-            const totalSpent = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-            const remaining = currentUser.monthlyBudget - totalSpent;
-
-            document.getElementById('monthlyBudgetDisplay').textContent = currentUser.monthlyBudget.toLocaleString();
-            document.getElementById('spentSoFarDisplay').textContent = totalSpent.toLocaleString();
-            document.getElementById('remainingDisplay').textContent = remaining.toLocaleString();
-        }
-
-        function addExpense(event) {
-            event.preventDefault();
-            
-            const amount = parseFloat(document.getElementById('expenseAmount').value);
-            const category = document.getElementById('expenseCategory').value;
-            const description = document.getElementById('expenseDescription').value;
-            const mood = document.getElementById('expenseMood').value;
-            const paymentMethod = document.getElementById('expensePayment').value;
-            const notes = document.getElementById('expenseNotes').value;
-
-            const expense = {
-                id: Date.now(),
-                userId: currentUser.id,
-                amount,
-                category,
-                description,
-                mood,
-                paymentMethod,
-                notes,
-                date: new Date().toISOString()
-            };
-
-            expenses.push(expense);
-            localStorage.setItem('backpack_expenses', JSON.stringify(expenses));
-            
-            showFlashMessage(`💸 Expense of ₹${amount.toFixed(2)} recorded successfully! Great job tracking! 🌟`);
-            
-            // Clear form
-            document.getElementById('expenseForm').reset();
-            
-            // Update budget status
-            updateUserProfile();
-        }
-
-        function showFlashMessage(message) {
-            const flash = document.createElement('div');
-            flash.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 1500;
-                background: white; padding: 16px 20px; border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-left: 4px solid #34C759;
-                animation: slideIn 0.3s ease;
-            `;
-            flash.innerHTML = `${message} <span onclick="this.parentElement.remove()" style="cursor:pointer;float:right;">&times;</span>`;
-            document.body.appendChild(flash);
-
-            setTimeout(() => {
-                if (flash.parentNode) flash.remove();
-            }, 5000);
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
-        }
-
-        // Initialize page
-        updateUserProfile();
-        // 📱 MOBILE SIDEBAR TOGGLE FUNCTIONALITY
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const overlay = document.getElementById('mobileOverlay');
-    
-    if (!sidebar || !menuToggle || !overlay) return;
-    
-    const isOpen = sidebar.classList.contains('mobile-open');
-    
-    if (isOpen) {
-        closeSidebar();
-    } else {
-        openSidebar();
-    }
-}
-
-function openSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const overlay = document.getElementById('mobileOverlay');
-    
-    if (!sidebar || !menuToggle || !overlay) return;
-    
-    sidebar.classList.add('mobile-open');
-    menuToggle.classList.add('active');
-    overlay.classList.add('show');
-    
-    // Prevent body scroll when sidebar is open
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const overlay = document.getElementById('mobileOverlay');
-    
-    if (!sidebar || !menuToggle || !overlay) return;
-    
-    sidebar.classList.remove('mobile-open');
-    menuToggle.classList.remove('active');
-    overlay.classList.remove('show');
-    
-    // Restore body scroll
-    document.body.style.overflow = 'auto';
-}
-
-// Close sidebar when clicking navigation links (mobile)
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                closeSidebar();
-            }
-        });
-    });
-    
-    // Close sidebar on window resize to desktop
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            closeSidebar();
-        }
-    });
-    
-    // Handle keyboard navigation (ESC to close)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && window.innerWidth <= 768) {
-            closeSidebar();
-        }
-    });
-});
-
-    </script>
+    <!-- External JavaScript -->
+    <script src="add-expense.js"></script>
 </body>
 </html>

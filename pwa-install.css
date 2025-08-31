@@ -1,0 +1,297 @@
+/* 🔧 PWA Install Button Styles */
+.install-pwa-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.install-pwa-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 122, 255, 0.6);
+}
+
+.install-pwa-btn.pwa-installable {
+    display: flex;
+}
+
+@keyframes installPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 12px 35px rgba(0, 122, 255, 0.8);
+    }
+}
+
+/* 🎯 Install Banner Styles */
+.install-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    color: white;
+    z-index: 2000;
+    animation: slideDown 0.5s ease-out;
+}
+
+.install-banner-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.install-banner-icon {
+    font-size: 32px;
+    animation: bounce 2s infinite;
+}
+
+.install-banner-text {
+    flex: 1;
+}
+
+.install-banner-text strong {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.install-banner-text p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.install-banner-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.install-banner-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.install-banner-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.install-banner-close:hover {
+    opacity: 1;
+}
+
+/* 📱 PWA Messages */
+.pwa-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    max-width: 400px;
+    animation: slideInRight 0.5s ease-out;
+}
+
+.pwa-message-content {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+}
+
+.pwa-message-content span {
+    flex: 1;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.pwa-message-content button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.pwa-message-content button:hover {
+    opacity: 1;
+}
+
+.pwa-message-success {
+    border-left: 5px solid #34C759;
+}
+
+.pwa-message-error {
+    border-left: 5px solid #FF3B30;
+}
+
+.pwa-message-info {
+    border-left: 5px solid #007AFF;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* 📱 Mobile Responsive */
+@media (max-width: 768px) {
+    .install-pwa-btn {
+        bottom: 15px;
+        right: 15px;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .install-banner-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .pwa-message {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        max-width: none;
+    }
+}
+
+@keyframes installPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 12px 35px rgba(0, 122, 255, 0.8);
+    }
+}
+
+/* Install Banner */
+.install-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    color: white;
+    z-index: 2000;
+    animation: slideDown 0.5s ease-out;
+}
+
+.install-banner-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.install-banner-icon {
+    font-size: 32px;
+    animation: bounce 2s infinite;
+}
+
+.install-banner-text strong {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.install-banner-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.install-banner-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
